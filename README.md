@@ -1,19 +1,14 @@
 # TrendingHashtagGraph
+[![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=dev)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
+[![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
-To start your Phoenix app:
+View the most trending hashtags on Twitter and see how they are related to other hashtags.
 
-  * Install dependencies with `mix deps.get`
-  * Install Node.js dependencies with `npm install`
-  * Start Phoenix endpoint with `mix phoenix.server`
+# Goals for this project
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: http://phoenixframework.org/docs/overview
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+- Learn how to use:
+  - Packer to create production deployable images and/or dockerfile
+  - Terraform for automating the creation of our cloud infrastructure
+- Creating and deploying Erlang releases with exrm
+- Become comfortable with the actor model
+- Try out front-end development
