@@ -1,0 +1,13 @@
+{application,hashtag_graph,
+             [{applications,[kernel,stdlib,elixir,logger,eex,public_key,
+                             extwitter,oauth]},
+              {description,"hashtag_graph"},
+              {modules,['Elixir.HashtagGraph','Elixir.HashtagGraph.Graph',
+                        'Elixir.HashtagGraph.Graph.Vertex',
+                        'Elixir.HashtagGraph.GraphCache',
+                        'Elixir.HashtagGraph.GraphCacheSupervisor',
+                        'Elixir.HashtagGraph.GraphServer']},
+              {registered,[]},
+              {vsn,"0.1.0"},
+              {extra_applications,[logger,eex,public_key,extwitter]},
+              {mod,{'Elixir.HashtagGraph',[]}}]}.
