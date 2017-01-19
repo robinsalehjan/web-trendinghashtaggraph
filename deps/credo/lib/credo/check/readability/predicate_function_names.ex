@@ -32,6 +32,7 @@ defmodule Credo.Check.Readability.PredicateFunctionNames do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(%SourceFile{} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -61,7 +62,7 @@ defmodule Credo.Check.Readability.PredicateFunctionNames do
   end
 
   def issues_for_name(_op, name, meta, issues, issue_meta) do
-    name = name |> to_string
+    name = to_string(name)
     cond do
       String.starts_with?(name, "is_") && String.ends_with?(name, "?") ->
         [issue_for(issue_meta, meta[:line], name, :predicate_and_question_mark) | issues]

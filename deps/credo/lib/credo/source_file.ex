@@ -10,11 +10,14 @@ defmodule Credo.SourceFile do
   @type t :: module
 
   def parse(source, filename) do
-    %Credo.SourceFile{
-      filename: filename |> Path.relative_to_cwd(),
-      source:   source,
-      lines:    source |> Credo.Code.to_lines,
-    } |> with_ast
+    source_file =
+      %Credo.SourceFile{
+        filename: Path.relative_to_cwd(filename),
+        source:   source,
+        lines:    Credo.Code.to_lines(source),
+      }
+
+    with_ast(source_file)
   end
 
   @doc """
@@ -46,11 +49,16 @@ defmodule Credo.SourceFile do
   """
   def column(source_file, line_no, trigger) do
     line = line_at(source_file, line_no)
-    regexed = trigger |> to_string |> Regex.escape
+    regexed =
+      trigger
+      |> to_string
+      |> Regex.escape
+
     case Regex.run(~r/\b#{regexed}\b/, line, return: :index) do
-      nil -> nil
+      nil ->
+        nil
       result ->
-        {col, _} = result |> List.first
+        {col, _} = List.first(result)
         col + 1
     end
   end

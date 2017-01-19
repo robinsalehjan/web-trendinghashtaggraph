@@ -22,23 +22,19 @@ defmodule Credo.ExsLoader do
 
   defp process_exs(v) when is_atom(v)
                         or is_binary(v)
-                        or is_boolean(v)
                         or is_float(v)
-                        or is_integer(v)
-                        or is_nil(v), do: v
+                        or is_integer(v), do: v
   defp process_exs(list) when is_list(list) do
     Enum.map(list, &process_exs/1)
   end
 
   defp process_exs({:sigil_w, _, [{:<<>>, _, [list_as_string]}, []]}) do
-    list_as_string
-    |> String.split(~r/\s+/)
+    String.split(list_as_string, ~r/\s+/)
   end
 
   # TODO: support regex modifiers
   defp process_exs({:sigil_r, _, [{:<<>>, _, [regex_as_string]}, []]}) do
-    regex_as_string
-    |> Regex.compile!
+    Regex.compile!(regex_as_string)
   end
 
   defp process_exs({:%{}, _meta, body}) do
@@ -78,6 +74,6 @@ defmodule Credo.ExsLoader do
   end
 
   defp process_map_item({key, value}, acc) when is_atom(key) or is_binary(key) do
-    Map.put acc, key, process_exs(value)
+    Map.put(acc, key, process_exs(value))
   end
 end

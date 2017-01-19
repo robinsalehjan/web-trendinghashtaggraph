@@ -8,10 +8,10 @@ defmodule Credo.Check.Refactor.PipeChainStart do
 
   use Credo.Check
 
+  @doc false
   def run(%SourceFile{ast: ast} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
-    excluded_functions = params |> Params.get(:excluded_functions, @default_params)
-
+    excluded_functions = Params.get(params, :excluded_functions, @default_params)
 
     Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta, excluded_functions))
   end
@@ -31,7 +31,7 @@ defmodule Credo.Check.Refactor.PipeChainStart do
   end
 
 
-  for atom <- [:%, :%{}, :.., :<<>>, :@, :__aliases__, :unquote, :{}, :&, :<>, :++, :--] do
+  for atom <- [:%, :%{}, :.., :<<>>, :@, :__aliases__, :unquote, :{}, :&, :<>, :++, :--, :&&, :||] do
     defp valid_chain_start?({unquote(atom), _meta, _arguments}, _excluded_functions) do
       true
     end
@@ -43,7 +43,8 @@ defmodule Credo.Check.Refactor.PipeChainStart do
   # function_call(with, args) and sigils
   defp valid_chain_start?({atom, _, arguments} = ast, excluded_functions) when is_atom(atom) and is_list(arguments) do
     function_name = to_function_call_name(ast)
-    sigil?(atom) || excluded_functions |> Enum.member?(function_name)
+
+    sigil?(atom) || Enum.member?(excluded_functions, function_name)
   end
   # map[:access]
   defp valid_chain_start?({{:., _, [Access, :get]}, _, _}, _excluded_functions) do
@@ -54,12 +55,15 @@ defmodule Credo.Check.Refactor.PipeChainStart do
   # Module.function_call(with, parameters)
   defp valid_chain_start?({{:., _, _}, _, _} = ast, excluded_functions) do
     function_name = to_function_call_name(ast)
-    excluded_functions |> Enum.member?(function_name)
+
+    Enum.member?(excluded_functions, function_name)
   end
   defp valid_chain_start?(_, _excluded_functions), do: true
 
   defp sigil?(atom) do
-    atom |> to_string |> String.match?(~r/^sigil_[a-zA-Z]$/)
+    atom
+    |> to_string
+    |> String.match?(~r/^sigil_[a-zA-Z]$/)
   end
 
   defp to_function_call_name({_, _, _} = ast) do

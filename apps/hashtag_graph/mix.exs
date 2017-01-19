@@ -38,6 +38,6 @@ defmodule HashtagGraph.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps() do
     [{:oauth, github: "tim/erlang-oauth"},
-    {:extwitter, "~> 0.7.2"}]
+    {:extwitter, "~> 0.8"}]
   end
 end

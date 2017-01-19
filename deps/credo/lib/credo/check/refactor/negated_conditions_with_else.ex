@@ -37,6 +37,7 @@ defmodule Credo.Check.Refactor.NegatedConditionsWithElse do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -45,8 +46,7 @@ defmodule Credo.Check.Refactor.NegatedConditionsWithElse do
 
   defp traverse({:if, meta, arguments} = ast, issues, issue_meta) do
     if negated_condition?(arguments) && CodeHelper.else_block?(ast) do
-      new_issue =
-        issue_for(issue_meta, meta[:line], "!")
+      new_issue = issue_for(issue_meta, meta[:line], "!")
 
       {ast, issues ++ [new_issue]}
     else
@@ -65,7 +65,7 @@ defmodule Credo.Check.Refactor.NegatedConditionsWithElse do
   end
   # parentheses around the condition wrap it in a __block__
   defp negated_condition?({:__block__, _meta, arguments}) do
-    arguments |> negated_condition?()
+    negated_condition?(arguments)
   end
   defp negated_condition?(_) do
     false

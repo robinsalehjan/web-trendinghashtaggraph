@@ -15,8 +15,6 @@ defmodule Credo.Check.CodeHelper do
   alias Credo.Service.SourceFileWithoutStringAndSigils
   alias Credo.SourceFile
 
-  @def_ops [:def, :defp, :defmacro]
-
   defdelegate do_block?(ast), to: Block, as: :do_block?
   defdelegate do_block_for!(ast), to: Block, as: :do_block_for!
   defdelegate do_block_for(ast), to: Block, as: :do_block_for
@@ -70,11 +68,12 @@ defmodule Credo.Check.CodeHelper do
         value
       :notfound ->
         result =
-          lines
-          |> Enum.map(fn({line_no, _}) ->
-              Scope.name(ast, line: line_no)
-            end)
+          Enum.map(lines, fn({line_no, _}) ->
+            Scope.name(ast, line: line_no)
+          end)
+
         SourceFileScopes.put(filename, result)
+
         result
     end
   end
@@ -99,7 +98,9 @@ defmodule Credo.Check.CodeHelper do
         value
       :notfound ->
         result = clean_strings_sigils_and_comments(source)
+
         SourceFileCodeOnly.put(filename, result)
+
         result
     end
   end
@@ -120,7 +121,9 @@ defmodule Credo.Check.CodeHelper do
         value
       :notfound ->
         result = clean_strings_and_sigils(source)
+
         SourceFileWithoutStringAndSigils.put(filename, result)
+
         result
     end
   end
@@ -170,8 +173,6 @@ defmodule Credo.Check.CodeHelper do
   end
   defp clean_node(v) when is_atom(v)
                       or is_binary(v)
-                      or is_boolean(v)
                       or is_float(v)
-                      or is_integer(v)
-                      or is_nil(v), do: v
+                      or is_integer(v), do: v
 end

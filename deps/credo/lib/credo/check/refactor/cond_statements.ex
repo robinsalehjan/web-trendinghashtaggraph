@@ -25,6 +25,7 @@ defmodule Credo.Check.Refactor.CondStatements do
 
   use Credo.Check
 
+  @doc false
   def run(%SourceFile{ast: ast} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -32,7 +33,12 @@ defmodule Credo.Check.Refactor.CondStatements do
   end
 
   defp traverse({:cond, meta, arguments} = ast, issues, issue_meta) do
-    count = arguments |> CodeHelper.do_block_for! |> List.wrap |> Enum.count
+    count =
+      arguments
+      |> CodeHelper.do_block_for!
+      |> List.wrap
+      |> Enum.count
+
     if count <= 2 do
       {ast, issues ++ [issue_for(issue_meta, meta[:line], :cond)]}
     else

@@ -2,7 +2,7 @@ defmodule Credo.Check.Readability.FunctionNames do
   @moduledoc """
   Function and macro names are always written in snake_case in Elixir.
 
-      # snake_case:
+      # snake_case
 
       def handle_incoming_message(message) do
       end
@@ -24,6 +24,7 @@ defmodule Credo.Check.Readability.FunctionNames do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(%SourceFile{} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 

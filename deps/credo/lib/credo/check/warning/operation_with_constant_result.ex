@@ -8,7 +8,7 @@ defmodule Credo.Check.Warning.OperationWithConstantResult do
       x * 1   # always returns x
       x * 0   # always returns 0
 
-  In pratice they are likely the result of a debugging session or were made by
+  In practice they are likely the result of a debugging session or were made by
   mistake.
   """
 
@@ -20,6 +20,7 @@ defmodule Credo.Check.Warning.OperationWithConstantResult do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -33,6 +34,7 @@ defmodule Credo.Check.Warning.OperationWithConstantResult do
   for {op, constant_result, operand} <- @ops_and_constant_results do
     defp traverse({unquote(op), meta, [_lhs, unquote(operand)]} = ast, issues, issue_meta) do
       new_issue = issue_for(issue_meta, meta[:line], unquote(op), unquote(constant_result))
+
       {ast, issues ++ [new_issue]}
     end
   end

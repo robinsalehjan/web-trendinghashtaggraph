@@ -11,13 +11,15 @@ defmodule Credo.CLI.Output.IssuesByScope do
   @indent 8
 
   @doc "Called before the analysis is run."
-  def print_before_info(source_files, _config) do
+  def print_before_info(source_files, config) do
     UI.puts ""
     case Enum.count(source_files) do
       0 -> UI.puts "No files found!"
       1 -> UI.puts "Checking 1 source file ..."
       count -> UI.puts "Checking #{count} source files ..."
     end
+
+    Output.print_skipped_checks(config)
   end
 
   @doc "Called after the analysis has run."
@@ -33,7 +35,6 @@ defmodule Credo.CLI.Output.IssuesByScope do
     |> Summary.print(config, time_load, time_run)
   end
 
-  @lint {Credo.Check.Refactor.PipeChainStart, false}
   defp print_issues(%SourceFile{issues: issues, filename: filename} = source_file, config, term_width) do
     issues
     |> Filter.important(config)

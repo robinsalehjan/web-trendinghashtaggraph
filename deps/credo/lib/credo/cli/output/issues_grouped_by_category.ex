@@ -25,19 +25,20 @@ defmodule Credo.CLI.Output.IssuesGroupedByCategory do
     consistency: "Consistency",
   ]
   @many_source_files 60
-  @indent 8
   @per_category 5
 
   @doc "Called before the analysis is run."
   def print_before_info(_source_files, %Config{format: "flycheck"}) do
     :ok
   end
-  def print_before_info(source_files, _config) do
+  def print_before_info(source_files, config) do
     case Enum.count(source_files) do
       0 -> UI.puts "No files found!"
       1 -> UI.puts "Checking 1 source file ..."
       count -> UI.puts "Checking #{count} source files#{checking_suffix(count)} ..."
     end
+
+    Output.print_skipped_checks(config)
   end
 
   defp checking_suffix(count) do

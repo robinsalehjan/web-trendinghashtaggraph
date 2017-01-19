@@ -47,8 +47,8 @@ defmodule Credo.Check.Consistency.SpaceAroundOperators do
     actual_prop = PropertyValue.get(actual_prop)
 
     line = issue_meta |> IssueMeta.source_file() |> SourceFile.line_at(line_no)
-    params = issue_meta |> IssueMeta.params()
-    ignored_triggers = params |> Params.get(:ignore, @default_params)
+    params = IssueMeta.params(issue_meta)
+    ignored_triggers = Params.get(params, :ignore, @default_params)
 
     if !Enum.member?(ignored_triggers, trigger) && create_issue?(line, column, trigger) do
       format_issue issue_meta,
@@ -85,7 +85,7 @@ defmodule Credo.Check.Consistency.SpaceAroundOperators do
 
   defp number_with_sign?(line, column) do
     line
-    |> String.slice(0..column - 2) # -2 because we need to substract the operator
+    |> String.slice(0..column - 2) # -2 because we need to subtract the operator
     |> String.match?(~r/(\s+|\@[a-zA-Z0-9\_]+|[\{\[\(\,\:\>\<\=\+\-\*\/])\s*$/)
   end
 
@@ -99,19 +99,22 @@ defmodule Credo.Check.Consistency.SpaceAroundOperators do
   defp minus_in_binary_size?(line, column) do
     binary_pattern_start_before? =
       line
-      |> String.slice(0..column - 2) # -2 because we need to substract the operator
+      |> String.slice(0..column - 2) # -2 because we need to subtract the operator
       |> String.match?(~r/\<\</)
+
     double_colon_before? =
       line
-      |> String.slice(0..column - 2) # -2 because we need to substract the operator
+      |> String.slice(0..column - 2) # -2 because we need to subtract the operator
       |> String.match?(~r/\:\:/)
+
     binary_pattern_end_after? =
       line
-      |> String.slice(column..-1) # -1 because we need to substract the operator
+      |> String.slice(column..-1) # -1 because we need to subtract the operator
       |> String.match?(~r/\>\>/)
+
     typed_after? =
       line
-      |> String.slice(column..-1) # -1 because we need to substract the operator
+      |> String.slice(column..-1) # -1 because we need to subtract the operator
       |> String.match?(~r/^\s*(signed|unsigned|binary|size)/)
 
     heuristics_met_count =

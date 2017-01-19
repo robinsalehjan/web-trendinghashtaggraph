@@ -12,18 +12,18 @@ defmodule Credo.CLI.Command.Explain do
 
   # TODO: explain used config options
 
+  @doc false
   def run(_args, %Config{help: true}), do: print_help()
   def run([], _), do: print_help()
   def run([file | _], config) do
     {_, source_files} = load_and_validate_source_files(config)
+    config = Runner.prepare_config(source_files, config)
     {_, {source_files, config}}  = run_checks(source_files, config)
 
     file
     |> String.split(":")
     |> print_result(source_files, config)
 
-    # TODO: return :error if there are issues so the CLI can exit with a status
-    #       code other than zero
     :ok
   end
 
@@ -35,8 +35,7 @@ defmodule Credo.CLI.Command.Explain do
         |> Enum.partition(&(&1.valid?))
       end
 
-    invalid_source_files
-    |> Output.complain_about_invalid_source_files
+    Output.complain_about_invalid_source_files(invalid_source_files)
 
     {time_load, valid_source_files}
   end
@@ -67,27 +66,30 @@ defmodule Credo.CLI.Command.Explain do
     output = output_mod(config)
     output.print_before_info([source_file], config)
 
-    source_file
-    |> output.print_after_info(config, line_no, column)
+    output.print_after_info(source_file, config, line_no, column)
   end
 
-
   defp print_help do
-    ["Usage: ", :olive, "mix credo explain path_line_no_column [options]"]
-    |> UI.puts
-    """
+    usage = ["Usage: ", :olive, "mix credo explain path_line_no_column [options]"]
+    description =
+      """
 
-    Explain the given issue.
-    """
-    |> UI.puts
-    ["Example: ", :olive, :faint, "$ mix credo explain lib/foo/bar.ex:13:6"]
-    |> UI.puts
-    """
+      Explain the given issue.
+      """
+    example = ["Example: ", :olive, :faint, "$ mix credo explain lib/foo/bar.ex:13:6"]
+    options =
+      """
 
-    General options:
-      -v, --version       Show version
-      -h, --help          Show this help
-    """
-    |> UI.puts
+      General options:
+        -v, --version       Show version
+        -h, --help          Show this help
+      """
+
+    UI.puts(usage)
+    UI.puts(description)
+    UI.puts(example)
+    UI.puts(options)
+
+    :ok
   end
 end

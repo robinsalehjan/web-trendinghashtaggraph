@@ -29,8 +29,11 @@ defmodule Credo.Check do
       end
 
       def category do
-        default = unquote(category_body(opts[:category]))
-        default || :unknown
+        unquote(category_body(opts[:category]) || :unknown)
+      end
+
+      def elixir_version do
+        unquote(opts[:elixir_version] || ">= 0.0.1")
       end
 
       def run_on_all? do
@@ -79,12 +82,8 @@ defmodule Credo.Check do
 
   @callback format_issue(issue_meta :: IssueMeta, opts :: Keyword.t) :: Issue.t
 
-  def explanation_for(nil, _) do
-    nil
-  end
-  def explanation_for(keywords, key) do
-    keywords[key]
-  end
+  def explanation_for(nil, _), do: nil
+  def explanation_for(keywords, key), do: keywords[key]
 
   @doc """
   format_issue takes an issue_meta and returns an issue.
@@ -99,18 +98,20 @@ defmodule Credo.Check do
   - `:exit_status`  Sets the issue's exit_status.
   - `:severity`     Sets the issue's severity.
   """
-  def format_issue(issue_meta, opts, category, base_priority, check) do
+  def format_issue(issue_meta, opts, issue_category, issue_base_priority, check) do
     source_file = IssueMeta.source_file(issue_meta)
     params = IssueMeta.params(issue_meta)
+
     priority =
       case params[:priority] do
-        nil -> base_priority
-        val -> val |> Check.to_priority
+        nil -> issue_base_priority
+        val -> Check.to_priority(val)
       end
+
     exit_status =
       case params[:exit_status] do
-        nil -> category |> Check.to_exit_status
-        val -> val |> Check.to_exit_status
+        nil -> Check.to_exit_status(issue_category)
+        val -> Check.to_exit_status(val)
       end
 
     line_no = opts[:line_no]
@@ -130,14 +131,14 @@ defmodule Credo.Check do
     }
     |> add_line_no_options(line_no, source_file)
     |> add_custom_column(trigger, line_no, column, source_file)
-    |> add_check_and_category(check, category)
+    |> add_check_and_category(check, issue_category)
   end
 
-  defp add_check_and_category(issue, check, category) do
+  defp add_check_and_category(issue, check, issue_category) do
     %Issue{
       issue |
       check: check,
-      category: category
+      category: issue_category
     }
   end
 
@@ -155,6 +156,7 @@ defmodule Credo.Check do
   defp add_line_no_options(issue, line_no, source_file) do
     if line_no do
       {_def, scope} = CodeHelper.scope_for(source_file, line: line_no)
+
       %Issue{
         issue |
         priority: issue.priority + priority_for(source_file, scope),
@@ -167,18 +169,20 @@ defmodule Credo.Check do
 
   defp priority_for(source_file, scope) do
     scope_prio_map = Priority.scope_priorities(source_file)
+
     scope_prio_map[scope] || 0
   end
 
-
-
   defp category_body(nil) do
     quote do
-      value =
+      name =
         __MODULE__
         |> Module.split
         |> Enum.at(2)
-      (value || :unknown)
+
+      safe_name = name || :unknown
+
+      safe_name
       |> to_string
       |> String.downcase
       |> String.to_atom
@@ -196,8 +200,7 @@ defmodule Credo.Check do
   @doc "Converts a given category to an exit status"
   def to_exit_status(nil), do: 0
   def to_exit_status(atom) when is_atom(atom) do
-    @base_category_exit_status_map[atom]
-    |> to_exit_status
+    to_exit_status(@base_category_exit_status_map[atom])
   end
   def to_exit_status(value), do: value
 

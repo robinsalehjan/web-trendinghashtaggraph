@@ -11,9 +11,11 @@ defmodule Credo.Code.Module do
 
   @doc "Reads an attribute from a module's `ast`"
   def attribute(ast, attr_name) do
-    case Credo.Code.postwalk(ast, &find_attribute(&1, &2, attr_name), {:error, nil}) do
-      {:ok, value} -> value
-      error -> error
+    case Code.postwalk(ast, &find_attribute(&1, &2, attr_name), {:error, nil}) do
+      {:ok, value} ->
+        value
+      error ->
+        error
     end
   end
 
@@ -27,8 +29,7 @@ defmodule Credo.Code.Module do
 
   def defs(nil), do: []
   def defs({:defmodule, _, _arguments} = ast) do
-    ast
-    |> Code.postwalk(&traverse_mod/2)
+    Code.postwalk(ast, &traverse_mod/2)
   end
 
   @doc "Returns the arity of the given function definition `ast`"
@@ -57,11 +58,11 @@ defmodule Credo.Code.Module do
   @doc "Returns the {fun_name, op} tuple of the function/macro defined in the given `ast`"
   for op <- @def_ops do
     def def_name_with_op({unquote(op) = op, _, _} = ast) do
-      {ast |> def_name, op}
+      {def_name(ast), op}
     end
     def def_name_with_op({unquote(op) = op, _, _} = ast, arity) do
-      if ast |> def_arity() == arity do
-        {ast |> def_name, op}
+      if def_arity(ast) == arity do
+        {def_name(ast), op}
       else
         nil
       end
@@ -117,16 +118,19 @@ defmodule Credo.Code.Module do
 
   # Single alias
   defp find_aliases({:alias, _, [{:__aliases__, _, mod_list}]} = ast, aliases) do
-    module_names = mod_list |> Credo.Code.Name.full |> List.wrap
+    module_names =
+      mod_list
+      |> Credo.Code.Name.full
+      |> List.wrap
+
     {ast, aliases ++ module_names}
   end
   # Multi alias
   defp find_aliases({:alias, _, [{{:., _, [{:__aliases__, _, mod_list}, :{}]}, _, multi_mod_list}]} = ast, aliases) do
     module_names =
-      multi_mod_list
-      |> Enum.map(fn(tuple) ->
-          [Credo.Code.Name.full(mod_list), Credo.Code.Name.full(tuple)] |> Credo.Code.Name.full
-        end)
+      Enum.map(multi_mod_list, fn(tuple) ->
+        Credo.Code.Name.full([Credo.Code.Name.full(mod_list), Credo.Code.Name.full(tuple)])
+      end)
 
     {ast, aliases ++ module_names}
   end
@@ -135,9 +139,11 @@ defmodule Credo.Code.Module do
   end
 
   defp find_attribute({:@, _meta, arguments} = ast, tuple, attribute_name) do
-    case arguments |> List.first do
-      {^attribute_name, _meta, [value]} -> {:ok, value}
-      _ -> {ast, tuple}
+    case List.first(arguments) do
+      {^attribute_name, _meta, [value]} ->
+        {:ok, value}
+      _ ->
+        {ast, tuple}
     end
   end
   defp find_attribute(ast, tuple, _name) do
@@ -146,26 +152,37 @@ defmodule Credo.Code.Module do
 
   # exclude module name
   defp find_dependent_modules({:defmodule, _, [{:__aliases__, _, mod_list}, _do_block]} = ast, modules) do
-    module_names = mod_list |> Credo.Code.Name.full |> List.wrap
+    module_names =
+      mod_list
+      |> Credo.Code.Name.full
+      |> List.wrap
+
     {ast, modules -- module_names}
   end
   # single alias
   defp find_dependent_modules({:alias, _, [{:__aliases__, _, mod_list}]} = ast, aliases) do
-    module_names = mod_list |> Credo.Code.Name.full |> List.wrap
+    module_names =
+      mod_list
+      |> Credo.Code.Name.full
+      |> List.wrap
+
     {ast, aliases -- module_names}
   end
   # multi alias
   defp find_dependent_modules({:alias, _, [{{:., _, [{:__aliases__, _, mod_list}, :{}]}, _, multi_mod_list}]} = ast, modules) do
     module_names =
-      multi_mod_list
-      |> Enum.flat_map(fn(tuple) ->
-          [Credo.Code.Name.full(mod_list), Credo.Code.Name.full(tuple)]
-        end)
+      Enum.flat_map(multi_mod_list, fn(tuple) ->
+        [Credo.Code.Name.full(mod_list), Credo.Code.Name.full(tuple)]
+      end)
 
     {ast, modules -- module_names}
   end
   defp find_dependent_modules({:__aliases__, _, mod_list} = ast, modules) do
-    module_names = mod_list |> Credo.Code.Name.full |> List.wrap
+    module_names =
+      mod_list
+      |> Credo.Code.Name.full
+      |> List.wrap
+
     {ast, modules ++ module_names}
   end
   defp find_dependent_modules(ast, modules) do

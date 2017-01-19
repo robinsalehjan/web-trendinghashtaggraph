@@ -29,24 +29,27 @@ defmodule Credo.Check.Readability.ModuleDoc do
 
   use Credo.Check
 
+  @doc false
   def run(%SourceFile{ast: ast, filename: filename} = source_file, params \\ []) do
     if String.match?(filename, ~r/\.exs$/) do
       []
     else
       issue_meta = IssueMeta.for(source_file, params)
-      ignore_names = params |> Params.get(:ignore_names, @default_params)
+      ignore_names = Params.get(params, :ignore_names, @default_params)
 
       {_continue, issues} = Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta, ignore_names), {true, []})
+
       issues
     end
   end
 
   defp traverse({:defmodule, meta, _arguments} = ast, {true, issues}, issue_meta, ignore_names) do
     mod_name = Module.name(ast)
-    if mod_name |> matches?(ignore_names) do
+    if matches?(mod_name, ignore_names) do
       {ast, {false, issues}}
     else
       exception? = Module.exception?(ast)
+
       case Module.attribute(ast, :moduledoc)  do
         {:error, _} when not exception? ->
           {ast, {true, [issue_for(issue_meta, meta[:line], mod_name)] ++ issues}}
@@ -61,10 +64,10 @@ defmodule Credo.Check.Readability.ModuleDoc do
   end
 
   defp matches?(name, patterns) when is_list(patterns) do
-    patterns |> Enum.any?(&matches?(name, &1))
+    Enum.any?(patterns, &matches?(name, &1))
   end
   defp matches?(name, string) when is_binary(string) do
-    name |> String.contains?(string)
+    String.contains?(name, string)
   end
   defp matches?(name, regex) do
     String.match?(name, regex)

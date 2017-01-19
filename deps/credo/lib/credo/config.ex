@@ -5,7 +5,9 @@ defmodule Credo.Config do
   """
 
   defstruct files:              nil,
+            color:              true,
             checks:             nil,
+            skipped_checks:     nil,
             requires:           [],
             min_priority:       0,
             help:               false,
@@ -36,8 +38,15 @@ defmodule Credo.Config do
   any patterns to include or exclude certain checks given via the command line.
   """
   def checks(%__MODULE__{checks: checks, match_checks: match_checks, ignore_checks: ignore_checks}) do
-    match_regexes = match_checks |> List.wrap |> to_match_regexes
-    ignore_regexes = ignore_checks |> List.wrap |> to_match_regexes
+    match_regexes =
+      match_checks
+      |> List.wrap
+      |> to_match_regexes
+
+    ignore_regexes =
+      ignore_checks
+      |> List.wrap
+      |> to_match_regexes
 
     checks
     |> Enum.filter(&match_regex(&1, match_regexes, true))
@@ -52,16 +61,14 @@ defmodule Credo.Config do
       |> List.first
       |> to_string
 
-    regexes
-    |> Enum.any?(&Regex.run(&1, check_name))
+    Enum.any?(regexes, &Regex.run(&1, check_name))
   end
 
   defp to_match_regexes(list) do
-    list
-    |> Enum.map(fn(match_check) ->
-        {:ok, match_pattern} = Regex.compile(match_check, "i")
-        match_pattern
-      end)
+    Enum.map(list, fn(match_check) ->
+      {:ok, match_pattern} = Regex.compile(match_check, "i")
+      match_pattern
+    end)
   end
 
   @doc """
@@ -107,7 +114,12 @@ defmodule Credo.Config do
 
   defp do_get_dir_paths(dirs, acc) when length(dirs) < 2, do: acc
   defp do_get_dir_paths([dir | tail], acc) do
-    expanded_path = tail |> Enum.reverse |> Path.join |> Path.join(dir)
+    expanded_path =
+      tail
+      |> Enum.reverse
+      |> Path.join
+      |> Path.join(dir)
+
     do_get_dir_paths(tail, [expanded_path | acc])
   end
 
@@ -136,14 +148,17 @@ defmodule Credo.Config do
       requires: data[:requires] || [],
       files: files_from_data(data, dir),
       checks: checks_from_data(data),
-      strict: data[:strict] || false
+      strict: data[:strict] || false,
+      color: data[:color] || false
     }
   end
 
   defp files_from_data(data, dir) do
     files = data[:files] || %{}
+    included_files = files[:included] || dir
+
     included_dir =
-      (files[:included] || dir)
+      included_files
       |> List.wrap
       |> Enum.map(&join_default_files_if_directory/1)
 
@@ -155,8 +170,10 @@ defmodule Credo.Config do
 
   defp checks_from_data(data) do
     case data[:checks] do
-      checks when is_list(checks) -> checks
-      _ -> []
+      checks when is_list(checks) ->
+        checks
+      _ ->
+        []
     end
   end
 
@@ -174,8 +191,8 @@ defmodule Credo.Config do
   The `checks:` field is merged.
   """
   def merge(list) when is_list(list) do
-    base = list |> List.first
-    tail = list |> List.delete_at(0)
+    base = List.first(list)
+    tail = List.delete_at(list, 0)
     merge(tail, base)
   end
   def merge([], config), do: config
@@ -190,6 +207,7 @@ defmodule Credo.Config do
       files: merge_files(base, other),
       checks: merge_checks(base, other),
       strict: other.strict,
+      color: other.color,
     }
   end
   def merge_checks(%__MODULE__{checks: checks_base}, %__MODULE__{checks: checks_other}) do
@@ -206,8 +224,7 @@ defmodule Credo.Config do
 
   defp normalize_check_tuples(nil), do: []
   defp normalize_check_tuples(list) when is_list(list) do
-    list
-    |> Enum.map(&normalize_check_tuple/1)
+    Enum.map(list, &normalize_check_tuple/1)
   end
 
   defp normalize_check_tuple({name}), do: {name, []}
@@ -253,6 +270,9 @@ defmodule Credo.Config do
   """
   def set_strict(%__MODULE__{strict: true} = config) do
     %__MODULE__{config | all: true, min_priority: -99}
+  end
+  def set_strict(%__MODULE__{strict: false} = config) do
+    %__MODULE__{config | all: false, min_priority: 0}
   end
   def set_strict(config), do: config
 end

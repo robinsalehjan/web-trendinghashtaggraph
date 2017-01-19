@@ -25,6 +25,7 @@ defmodule Credo.Check.Readability.ModuleNames do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -43,7 +44,7 @@ defmodule Credo.Check.Readability.ModuleNames do
       {:__aliases__, meta, names} ->
         names |> Enum.join(".") |> issues_for_name(meta, issues, issue_meta)
       {name, meta, nil} ->
-        name |> issues_for_name(meta, issues, issue_meta)
+        issues_for_name(name, meta, issues, issue_meta)
       _ ->
         issues
     end

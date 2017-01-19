@@ -1,3 +1,15 @@
+0.8.0
+------
+#### Changes
+* OAuth dependency library is updated (#63).
+    - Adding `{:oauth, github: "tim/erlang-oauth"}` in mix.exs becomes not required.
+
+* Configurations for proxy is simplified.
+    - https://github.com/parroty/extwitter#proxy
+
+* Fix [mix bench] task error and library updates.
+    - Update benchfella and remove some warning notes about setup/teardown.
+
 0.7.3
 ------
 #### Enhancements

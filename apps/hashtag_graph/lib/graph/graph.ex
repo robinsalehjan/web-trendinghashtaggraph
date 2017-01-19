@@ -123,7 +123,7 @@ defmodule HashtagGraph.Graph do
       try do
         {:ok, ExTwitter.search(hashtag, count: 5)}
       rescue
-        error -> {:reschedule, []}
+        _ -> {:reschedule, []}
       end
 
     case response do

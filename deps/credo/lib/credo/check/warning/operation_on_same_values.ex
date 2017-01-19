@@ -13,7 +13,7 @@ defmodule Credo.Check.Warning.OperationOnSameValues do
       y / y   # always returns 1
       y - y   # always returns 0
 
-  In pratice they are likely the result of a debugging session or were made by
+  In practice they are likely the result of a debugging session or were made by
   mistake.
   """
 
@@ -31,6 +31,7 @@ defmodule Credo.Check.Warning.OperationOnSameValues do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -40,8 +41,10 @@ defmodule Credo.Check.Warning.OperationOnSameValues do
   for {op, operation_name, constant_result} <- @ops_and_constant_results do
     defp traverse({unquote(op), meta, [lhs, rhs]} = ast, issues, issue_meta) do
       if CodeHelper.remove_metadata(lhs) == CodeHelper.remove_metadata(rhs) do
-        new_issue = issue_for(issue_meta, meta[:line], unquote(op), unquote(operation_name),
-                                    unquote(constant_result))
+        new_issue =
+          issue_for(issue_meta, meta[:line], unquote(op),
+            unquote(operation_name), unquote(constant_result))
+
         {ast, issues ++ [new_issue]}
       else
         {ast, issues}

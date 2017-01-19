@@ -22,10 +22,9 @@ defmodule ExTwitter.API.Base do
 
   defp do_request(method, url, params) do
     oauth = ExTwitter.Config.get_tuples |> verify_params
-    consumer = {oauth[:consumer_key], oauth[:consumer_secret], :hmac_sha1}
-    token = oauth[:access_token]
-    secret = oauth[:access_token_secret]
-    case ExTwitter.OAuth.request(method, url, params, consumer, token, secret) do
+    response = ExTwitter.OAuth.request(method, url, params,
+      oauth[:consumer_key], oauth[:consumer_secret], oauth[:access_token], oauth[:access_token_secret])
+    case response do
       {:error, reason} -> raise(ExTwitter.ConnectionError, reason: reason)
       r -> r |> parse_result
     end
@@ -48,11 +47,11 @@ defmodule ExTwitter.API.Base do
   end
 
   def request_url(path) do
-    "https://api.twitter.com/#{path}" |> to_char_list
+    "https://api.twitter.com/#{path}"
   end
 
   defp upload_url(path) do
-    "https://upload.twitter.com/#{path}" |> to_char_list
+    "https://upload.twitter.com/#{path}"
   end
 
   def parse_result(result) do
@@ -80,11 +79,11 @@ defmodule ExTwitter.API.Base do
     case code do
       @error_code_rate_limit_exceeded ->
         reset_at = fetch_rate_limit_reset(header)
-        reset_in = Enum.max([reset_at - now, 0])
+        reset_in = Enum.max([reset_at - now(), 0])
         raise ExTwitter.RateLimitExceededError,
           code: code, message: message, reset_at: reset_at, reset_in: reset_in
-      _  ->
-        raise ExTwitter.Error, code: code, message: message
+        _  ->
+          raise ExTwitter.Error, code: code, message: message
     end
   end
 

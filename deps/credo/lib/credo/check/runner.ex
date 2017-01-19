@@ -1,21 +1,15 @@
 defmodule Credo.Check.Runner do
+  alias Credo.CLI.Output.UI
   alias Credo.Config
   alias Credo.SourceFile
   alias Credo.Service.SourceFileIssues
 
+  @doc false
   def run(source_files, config) when is_list(source_files) do
-    config =
-      config
-      |> set_lint_attributes(source_files)
-      |> exclude_low_priority_checks(config.min_priority - 9)
-
     {_time_run_on_all, source_files_after_run_on_all} =
       :timer.tc fn ->
-        source_files
-        |> run_checks_that_run_on_all(config)
+        run_checks_that_run_on_all(source_files, config)
       end
-
-    #IO.inspect time_run_on_all
 
     {_time_run, source_files} =
       :timer.tc fn ->
@@ -24,16 +18,27 @@ defmodule Credo.Check.Runner do
         |> Enum.map(&Task.await(&1, :infinity))
       end
 
-    #IO.inspect time_run
-
     {source_files, config}
   end
-
   def run(%SourceFile{} = source_file, config) do
-    checks = config |> Config.checks |> Enum.reject(&run_on_all_check?/1)
+    checks =
+      config
+      |> Config.checks
+      |> Enum.reject(&run_on_all_check?/1)
 
     issues = run_checks(source_file, checks, config)
+
     %SourceFile{source_file | issues: source_file.issues ++ issues}
+  end
+
+  @doc """
+  Prepares the Config struct based on a given list of `source_files`.
+  """
+  def prepare_config(source_files, config) do
+    config
+    |> set_lint_attributes(source_files)
+    |> exclude_low_priority_checks(config.min_priority - 9)
+    |> exclude_checks_based_on_elixir_version
   end
 
   defp set_lint_attributes(config, source_files) do
@@ -59,17 +64,36 @@ defmodule Credo.Check.Runner do
 
   defp exclude_low_priority_checks(config, below_priority) do
     checks =
-      config.checks
-      |> Enum.reject(fn
-          ({check}) -> check.base_priority < below_priority
-          ({check, _}) -> check.base_priority < below_priority
-        end)
+      Enum.reject(config.checks, fn
+        ({check}) -> check.base_priority < below_priority
+        ({_check, false}) -> true
+        ({check, opts}) ->
+          (opts[:priority] || check.base_priority) < below_priority
+      end)
 
     %Config{config | checks: checks}
   end
 
+  defp exclude_checks_based_on_elixir_version(config) do
+    version = System.version()
+    skipped_checks = Enum.reject(config.checks, &matches_requirement?(&1, version))
+    checks = Enum.filter(config.checks, &matches_requirement?(&1, version))
+
+    %Config{config | checks: checks, skipped_checks: skipped_checks}
+  end
+
+  defp matches_requirement?({check, _}, version) do
+    matches_requirement?({check}, version)
+  end
+  defp matches_requirement?({check}, version) do
+    Version.match?(version, check.elixir_version)
+  end
+
   defp run_checks_that_run_on_all(source_files, config) do
-    checks = config |> Config.checks |> Enum.filter(&run_on_all_check?/1)
+    checks =
+      config
+      |> Config.checks
+      |> Enum.filter(&run_on_all_check?/1)
 
     checks
     |> Enum.map(&Task.async(fn ->
@@ -77,13 +101,11 @@ defmodule Credo.Check.Runner do
       end))
     |> Enum.each(&Task.await(&1, :infinity))
 
-    source_files
-    |> SourceFileIssues.update_in_source_files
+    SourceFileIssues.update_in_source_files(source_files)
   end
 
   defp run_checks(%SourceFile{} = source_file, checks, config) when is_list(checks) do
-    checks
-    |> Enum.flat_map(&run_check(&1, source_file, config))
+    Enum.flat_map(checks, &run_check(&1, source_file, config))
   end
 
   defp run_check({_check, false}, source_files, _config) when is_list(source_files) do
@@ -100,13 +122,20 @@ defmodule Credo.Check.Runner do
       check.run(source_file, params)
     rescue
       error ->
-        IO.puts(:stderr, "Error while running #{check} on #{source_file.filename}")
+        warn_about_failed_run(check, source_file)
         if config.crash_on_error do
           reraise error, System.stacktrace()
         else
           []
         end
     end
+  end
+
+  defp warn_about_failed_run(check, %SourceFile{} = source_file) do
+    UI.warn("Error while running #{check} on #{source_file.filename}")
+  end
+  defp warn_about_failed_run(check, _) do
+    UI.warn("Error while running #{check}")
   end
 
   defp run_on_all_check?({check}), do: check.run_on_all?

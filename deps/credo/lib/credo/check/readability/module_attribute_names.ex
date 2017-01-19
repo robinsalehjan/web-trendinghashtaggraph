@@ -2,7 +2,7 @@ defmodule Credo.Check.Readability.ModuleAttributeNames do
   @moduledoc """
   Module attribute names are always written in snake_case in Elixir.
 
-      # snake_case:
+      # snake_case
 
       @inbox_name "incoming"
 
@@ -21,6 +21,7 @@ defmodule Credo.Check.Readability.ModuleAttributeNames do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 

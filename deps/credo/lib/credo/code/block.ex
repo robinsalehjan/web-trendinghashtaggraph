@@ -9,10 +9,10 @@ defmodule Credo.Code.Block do
   """
   def all_blocks_for!(ast) do
     [
-      ast |> do_block_for!,
-      ast |> else_block_for!,
-      ast |> rescue_block_for!,
-      ast |> after_block_for!,
+      do_block_for!(ast),
+      else_block_for!(ast),
+      rescue_block_for!(ast),
+      after_block_for!(ast),
     ]
   end
 
@@ -21,8 +21,10 @@ defmodule Credo.Code.Block do
   """
   def do_block?(ast) do
     case do_block_for(ast) do
-      {:ok, _block} -> true
-      nil -> false
+      {:ok, _block} ->
+        true
+      nil ->
+        false
     end
   end
 
@@ -31,8 +33,10 @@ defmodule Credo.Code.Block do
   """
   def do_block_for!(ast) do
     case do_block_for(ast) do
-      {:ok, block} -> block
-      nil -> nil
+      {:ok, block} ->
+        block
+      nil ->
+        nil
     end
   end
 
@@ -46,8 +50,7 @@ defmodule Credo.Code.Block do
     {:ok, block}
   end
   def do_block_for(arguments) when is_list(arguments) do
-    arguments
-    |> Enum.find_value(&find_keyword(&1, :do))
+    Enum.find_value(arguments, &find_keyword(&1, :do))
   end
   def do_block_for(_) do
     nil
@@ -60,8 +63,10 @@ defmodule Credo.Code.Block do
   """
   def else_block?(ast) do
     case else_block_for(ast) do
-      {:ok, _block} -> true
-      nil -> false
+      {:ok, _block} ->
+        true
+      nil ->
+        false
     end
   end
 
@@ -70,8 +75,10 @@ defmodule Credo.Code.Block do
   """
   def else_block_for!(ast) do
     case else_block_for(ast) do
-      {:ok, block} -> block
-      nil -> nil
+      {:ok, block} ->
+        block
+      nil ->
+        nil
     end
   end
 
@@ -85,8 +92,7 @@ defmodule Credo.Code.Block do
     {:ok, else_block}
   end
   def else_block_for(arguments) when is_list(arguments) do
-    arguments
-    |> Enum.find_value(&find_keyword(&1, :else))
+    Enum.find_value(arguments, &find_keyword(&1, :else))
   end
   def else_block_for(_) do
     nil
@@ -100,8 +106,10 @@ defmodule Credo.Code.Block do
   """
   def rescue_block?(ast) do
     case rescue_block_for(ast) do
-      {:ok, _block} -> true
-      nil -> false
+      {:ok, _block} ->
+        true
+      nil ->
+        false
     end
   end
 
@@ -110,8 +118,10 @@ defmodule Credo.Code.Block do
   """
   def rescue_block_for!(ast) do
     case rescue_block_for(ast) do
-      {:ok, block} -> block
-      nil -> nil
+      {:ok, block} ->
+        block
+      nil ->
+        nil
     end
   end
 
@@ -125,8 +135,7 @@ defmodule Credo.Code.Block do
     {:ok, rescue_block}
   end
   def rescue_block_for(arguments) when is_list(arguments) do
-    arguments
-    |> Enum.find_value(&find_keyword(&1, :rescue))
+    Enum.find_value(arguments, &find_keyword(&1, :rescue))
   end
   def rescue_block_for(_) do
     nil
@@ -140,8 +149,10 @@ defmodule Credo.Code.Block do
   """
   def after_block?(ast) do
     case after_block_for(ast) do
-      {:ok, _block} -> true
-      nil -> false
+      {:ok, _block} ->
+        true
+      nil ->
+        false
     end
   end
 
@@ -150,8 +161,10 @@ defmodule Credo.Code.Block do
   """
   def after_block_for!(ast) do
     case after_block_for(ast) do
-      {:ok, block} -> block
-      nil -> nil
+      {:ok, block} ->
+        block
+      nil ->
+        nil
     end
   end
 
@@ -165,8 +178,7 @@ defmodule Credo.Code.Block do
     {:ok, after_block}
   end
   def after_block_for(arguments) when is_list(arguments) do
-    arguments
-    |> Enum.find_value(&find_keyword(&1, :after))
+    Enum.find_value(arguments, &find_keyword(&1, :after))
   end
   def after_block_for(_) do
     nil
@@ -202,9 +214,7 @@ defmodule Credo.Code.Block do
   defp instructions_for(v) when is_atom(v)
                       or is_tuple(v)
                       or is_binary(v)
-                      or is_boolean(v)
                       or is_float(v)
-                      or is_integer(v)
-                      or is_nil(v), do: List.wrap(v)
+                      or is_integer(v), do: List.wrap(v)
   defp instructions_for(v) when is_list(v), do: [v]
 end

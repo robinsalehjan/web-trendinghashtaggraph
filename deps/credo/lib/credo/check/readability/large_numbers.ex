@@ -23,11 +23,12 @@ defmodule Credo.Check.Readability.LargeNumbers do
     only_greater_than: 9_999,
   ]
 
-  use Credo.Check, base_priority: :high
+  use Credo.Check, base_priority: :high, elixir_version: ">= 1.3.2"
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
-    min_number = params |> Params.get(:only_greater_than, @default_params)
+    min_number = Params.get(params, :only_greater_than, @default_params)
 
     source_file.source
     |> Credo.Code.to_tokens
@@ -57,9 +58,7 @@ defmodule Credo.Check.Readability.LargeNumbers do
   end
   defp find_issues([{:number, {line_no, column1, _column2} = location, number} | t], acc, issue_meta) do
     source = source_fragment(location, issue_meta)
-
     underscored_number = number_with_underscores(number, source)
-
     new_issue =
       if decimal_in_source?(source) && source != underscored_number do
         [issue_for(
@@ -82,9 +81,9 @@ defmodule Credo.Check.Readability.LargeNumbers do
   defp number_with_underscores(number, source_fragment) when is_number(number) do
     case String.split(source_fragment, ".", parts: 2) do
       [num, decimal] ->
-        [num |> add_underscores_to_number_string(), decimal] |> Enum.join(".")
+        Enum.join([add_underscores_to_number_string(num), decimal], ".")
       [num] ->
-        num |> add_underscores_to_number_string()
+        add_underscores_to_number_string(num)
     end
   end
 
@@ -121,7 +120,7 @@ defmodule Credo.Check.Readability.LargeNumbers do
       |> String.strip
       |> String.replace(~r/\D$/, "")
 
-    if System.version |> Version.match?("< 1.3.2-dev") do
+    if Version.match?(System.version, "< 1.3.2-dev") do
       source_fragment_pre_132(tuple, issue_meta, fragment)
     else
       fragment

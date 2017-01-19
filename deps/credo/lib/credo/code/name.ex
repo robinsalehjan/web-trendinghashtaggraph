@@ -5,29 +5,43 @@ defmodule Credo.Code.Name do
   """
 
   def last(name) when is_atom(name) do
-    name |> to_string |> String.split(".") |> List.last
+    name
+    |> to_string
+    |> String.split(".")
+    |> List.last
   end
   def last(name) when is_binary(name) do
-    name |> String.split(".") |> List.last
+    name
+    |> String.split(".")
+    |> List.last
   end
   def last(mod_list) when is_list(mod_list) do
-    mod_list |> List.last |> to_string
+    mod_list
+    |> List.last
+    |> to_string
   end
 
-  # Credo.Code.Name |> to_string 
+  # Credo.Code.Name |> to_string
   # => "Elixir.Credo.Code.Name"
   def first(name) when is_atom(name) do
-    name |> to_string |> String.split(".") |> Enum.at(1)
+    name
+    |> to_string
+    |> String.split(".")
+    |> Enum.at(1)
   end
   def first(name) when is_binary(name) do
-    name |> String.split(".") |> List.first
+    name
+    |> String.split(".")
+    |> List.first
   end
   def first(mod_list) when is_list(mod_list) do
-    mod_list |> List.first |> to_string
+    mod_list
+    |> List.first
+    |> to_string
   end
 
   def full({:__aliases__, _, mod_list}) do
-    mod_list |> full
+    full(mod_list)
   end
   def full(mod_list) when is_list(mod_list) do
     mod_list
@@ -35,7 +49,7 @@ defmodule Credo.Code.Name do
     |> Enum.join(".")
   end
   def full({name, _, nil}) when is_atom(name) do
-    name |> full
+    full(name)
   end
   def full(name) when is_atom(name) do
     name
@@ -46,6 +60,15 @@ defmodule Credo.Code.Name do
   def full(name) when is_binary(name) do
     name
   end
+  def full({{:., _, [{:__aliases__, _, mod_list}, name]}, _, _}) do
+    full([full(mod_list), name])
+  end
+  def full({:@, _, [{name, _, nil}]}) when is_atom(name) do
+    "@#{name}"
+  end
+  def full({:unquote, _, [{name, _, nil}]}) when is_atom(name) do
+    "unquote(#{name})"
+  end
 
   def parts_count(module_name) do
     module_name
@@ -54,28 +77,29 @@ defmodule Credo.Code.Name do
   end
 
   def pascal_case?(name) do
-    name |> String.match?(~r/^[A-Z][a-zA-Z0-9]*$/)
+    String.match?(name, ~r/^[A-Z][a-zA-Z0-9]*$/)
   end
 
   def split_pascal_case(name) do
-    name |> String.replace(~r/([A-Z])/, " \\1") |> String.split
+    name
+    |> String.replace(~r/([A-Z])/, " \\1")
+    |> String.split
   end
 
   def snake_case?(name) do
-    name |> String.match?(~r/^[a-z0-9\_\?\!]+$/)
+    String.match?(name, ~r/^[a-z0-9\_\?\!]+$/)
   end
 
   def no_case?(name) do
-    name |> String.match?(~r/^[^a-zA-Z0-9]+$/)
+    String.match?(name, ~r/^[^a-zA-Z0-9]+$/)
   end
 
-  defp name_from_splitted_parts(splitted_parts) when length(splitted_parts) > 1 do
-    splitted_parts
-    |> Enum.slice(1, length(splitted_parts))
+  defp name_from_splitted_parts(parts) when length(parts) > 1 do
+    parts
+    |> Enum.slice(1, length(parts))
     |> Enum.join(".")
   end
-  defp name_from_splitted_parts(splitted_parts) do
-    splitted_parts
-    |> Enum.join(".")
+  defp name_from_splitted_parts(parts) do
+    Enum.join(parts, ".")
   end
 end

@@ -1,12 +1,15 @@
 defmodule Credo.Check.Readability.TrailingWhiteSpace do
   @moduledoc """
   There should be no white-space (i.e. tabs, spaces) at the end of a line.
+
+  Most text editors provide a way to remove them automatically.
   """
 
   @explanation [check: @moduledoc]
 
   use Credo.Check, base_priority: :low
 
+  @doc false
   def run(%SourceFile{lines: lines} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -18,7 +21,8 @@ defmodule Credo.Check.Readability.TrailingWhiteSpace do
       case Regex.run(~r/\s+$/, line, return: :index) do
         [{column, line_length}] ->
           [issue_for(issue_meta, line_no, column + 1, line_length) | issues]
-        nil -> issues
+        nil ->
+          issues
       end
     traverse_line(tail, issues, issue_meta)
   end

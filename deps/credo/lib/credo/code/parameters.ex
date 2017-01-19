@@ -10,10 +10,13 @@ defmodule Credo.Code.Parameters do
   def count(nil), do: 0
   for op <- @def_ops do
     def count({unquote(op), _, arguments}) when is_list(arguments) do
-      case arguments |> List.first do
-        {_atom, _meta, nil} -> 0
-        {_atom, _meta, list} -> list |> Enum.count
-        _ -> 0
+      case List.first(arguments) do
+        {_atom, _meta, nil} ->
+          0
+        {_atom, _meta, list} ->
+          Enum.count(list)
+        _ ->
+          0
       end
     end
   end
@@ -22,12 +25,16 @@ defmodule Credo.Code.Parameters do
   def names(nil), do: nil
   for op <- @def_ops do
     def names({unquote(op), _meta, arguments}) when is_list(arguments) do
-      arguments |> List.first |> get_param_names
+      arguments
+      |> List.first
+      |> get_param_names
     end
   end
 
   defp get_param_names({:when, _meta, arguments}) do
-    arguments |> List.first |> get_param_names
+    arguments
+    |> List.first
+    |> get_param_names
   end
   defp get_param_names(arguments) when is_tuple(arguments) do
     arguments
@@ -38,7 +45,7 @@ defmodule Credo.Code.Parameters do
   end
 
   defp get_param_name({:::, _, [var, _type]}) do
-    var |> get_param_name
+    get_param_name(var)
   end
   defp get_param_name({:<<>>, _, arguments}) do
     arguments
@@ -51,22 +58,20 @@ defmodule Credo.Code.Parameters do
     |> Enum.reject(&is_nil/1)
   end
   defp get_param_name({:%, _, [{:__aliases__, _meta, _mod_list}, {:%{}, _meta2, arguments}]}) do
-    arguments
-    |> get_param_name
+    get_param_name(arguments)
   end
   defp get_param_name({:%{}, _, arguments}) do
-    arguments
-    |> get_param_name
+    get_param_name(arguments)
   end
   defp get_param_name({:\\, _, arguments}) do
-    arguments
-    |> Enum.find_value(&get_param_name/1)
+    Enum.find_value(arguments, &get_param_name/1)
   end
   defp get_param_name(list) when is_list(list) do
     list
     |> Enum.map(fn
-      {atom, tuple} when is_atom(atom) and is_tuple(tuple) -> get_param_name(tuple)
-    end)
+        {atom, tuple} when is_atom(atom) and is_tuple(tuple) ->
+          get_param_name(tuple)
+      end)
     |> Enum.reject(&is_nil/1)
   end
   defp get_param_name({name, _, nil}) when is_atom(name), do: name

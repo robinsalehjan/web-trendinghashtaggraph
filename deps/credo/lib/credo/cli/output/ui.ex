@@ -1,15 +1,21 @@
 defmodule Credo.CLI.Output.UI do
-
   @edge "┃"
   @ellipsis "…"
+  @shell_service Credo.CLI.Output.Shell
 
   def edge(color, indent \\ 2) when is_integer(indent) do
     [:reset, color, @edge |> String.ljust(indent)]
   end
 
-  defdelegate puts, to: Bunt
-  defdelegate puts(v), to: Bunt
-  def puts(v, color), do: Bunt.puts([color, v])
+  defdelegate use_colors(v), to: @shell_service
+
+  defdelegate puts, to: @shell_service
+  defdelegate puts(v), to: @shell_service
+  def puts(v, color) when is_atom(color) do
+    @shell_service.puts([color, v])
+  end
+
+  defdelegate warn(v), to: @shell_service
 
   def puts_edge(color, indent \\ 2) when is_integer(indent) do
     color
@@ -44,14 +50,13 @@ defmodule Credo.CLI.Output.UI do
   def truncate(_line, max_length, _ellipsis) when max_length <= 0, do: ""
   def truncate(line, max_length, ellipsis) when max_length > 0 do
     cond do
-      String.length(line) <= max_length -> line
-
-      String.length(ellipsis) >= max_length -> ellipsis
-
+      String.length(line) <= max_length ->
+        line
+      String.length(ellipsis) >= max_length ->
+        ellipsis
       true ->
         chars_to_display = max_length - String.length(ellipsis)
         String.slice(line, 0, chars_to_display) <> ellipsis
     end
   end
-
 end

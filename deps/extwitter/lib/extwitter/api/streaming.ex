@@ -49,7 +49,7 @@ defmodule ExTwitter.API.Streaming do
   def stream_control(pid, :stop, options \\ []) do
     timeout = options[:timeout] || @default_control_timeout
 
-    send pid, {:control_stop, self}
+    send pid, {:control_stop, self()}
 
     receive do
       :ok -> :ok
@@ -60,10 +60,11 @@ defmodule ExTwitter.API.Streaming do
 
   defp spawn_async_request(req=%AsyncRequest{}) do
     oauth = ExTwitter.Config.get_tuples |> ExTwitter.API.Base.verify_params
-    consumer = {oauth[:consumer_key], oauth[:consumer_secret], :hmac_sha1}
     spawn(fn ->
       response = ExTwitter.OAuth.request_async(
-        req.method, request_url(req.path), req.params, consumer, oauth[:access_token], oauth[:access_token_secret])
+        req.method, request_url(req.path), req.params,
+        oauth[:consumer_key], oauth[:consumer_secret], oauth[:access_token], oauth[:access_token_secret])
+
       case response do
         {:ok, request_id} ->
           process_stream(req.processor, request_id, req.configs)
@@ -75,11 +76,11 @@ defmodule ExTwitter.API.Streaming do
 
   defp create_stream(req, timeout) do
     Stream.resource(
-      fn -> {%{req | processor: self}, nil} end,
+      fn -> {%{req | processor: self()}, nil} end,
       fn({req, pid}) -> receive_next_tweet(pid, req, timeout) end,
       fn({_req, pid}) ->
         if pid != nil do
-          send pid, {:cancel, self}
+          send pid, {:cancel, self()}
         end
       end
     )
@@ -99,7 +100,7 @@ defmodule ExTwitter.API.Streaming do
         {[tweet], {req, pid}}
 
       {:control_stop, requester} ->
-        send pid, {:cancel, self}
+        send pid, {:cancel, self()}
         send requester, :ok
         {:halt, {req, pid}}
 
@@ -112,7 +113,7 @@ defmodule ExTwitter.API.Streaming do
 
     after
       max_timeout ->
-        send pid, {:cancel, self}
+        send pid, {:cancel, self()}
         case timeout do
           :infinity ->
             Logger.debug "Tweet timeout, restarting stream."
@@ -240,10 +241,10 @@ defmodule ExTwitter.API.Streaming do
     end
   end
   defp request_url("1.1/user.json" = path) do
-    "https://userstream.twitter.com/#{path}" |> to_char_list
+    "https://userstream.twitter.com/#{path}"
   end
 
   defp request_url(path) do
-    "https://stream.twitter.com/#{path}" |> to_char_list
+    "https://stream.twitter.com/#{path}"
   end
 end

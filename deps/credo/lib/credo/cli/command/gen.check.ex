@@ -6,6 +6,7 @@ defmodule Credo.CLI.Command.GenCheck do
   @check_template_filename ".template.check.ex"
   @default_check_template_file File.read!(@check_template_filename)
 
+  @doc false
   def run(args, _config) do
     args
     |> List.first
@@ -13,9 +14,13 @@ defmodule Credo.CLI.Command.GenCheck do
   end
 
   defp create_check_file(nil) do
-    [:red, :bright, "Please provide a filename:", "\n\n",
-      "  mix credo gen.check lib/my_first_credo_check.ex", "\n"]
-    |> Bunt.puts
+    output =
+      [
+        :red, :bright, "Please provide a filename:", "\n\n",
+        "  mix credo gen.check lib/my_first_credo_check.ex", "\n"
+      ]
+
+    Bunt.puts(output)
   end
   defp create_check_file(filename) do
     check_name = check_name_for(filename)

@@ -23,6 +23,7 @@ defmodule Credo.Check.Refactor.NegatedConditionsInUnless do
 
   use Credo.Check, base_priority: :high
 
+  @doc false
   def run(source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -30,10 +31,9 @@ defmodule Credo.Check.Refactor.NegatedConditionsInUnless do
   end
 
   defp traverse({:unless, meta, arguments} = ast, issues, issue_meta) do
-    new_issue =
-      issue_for_first_condition(arguments |> List.first, meta, issue_meta)
+    issue = issue_for_first_condition(List.first(arguments), meta, issue_meta)
 
-    {ast, issues ++ List.wrap(new_issue)}
+    {ast, issues ++ List.wrap(issue)}
   end
   defp traverse(ast, issues, _issue_meta) do
     {ast, issues}

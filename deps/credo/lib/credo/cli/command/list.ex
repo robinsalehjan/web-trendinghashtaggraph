@@ -5,22 +5,34 @@ defmodule Credo.CLI.Command.List do
 
   alias Credo.Check.Runner
   alias Credo.Config
+  alias Credo.CLI.Filter
   alias Credo.CLI.Output.IssuesByScope
   alias Credo.CLI.Output.IssuesShortList
   alias Credo.CLI.Output.UI
   alias Credo.CLI.Output
   alias Credo.Sources
 
+  @doc false
   def run(_args, %Config{help: true}), do: print_help()
   def run(_args, config) do
     {time_load, source_files} = load_and_validate_source_files(config)
+    config = Runner.prepare_config(source_files, config)
     {time_run, {source_files, config}}  = run_checks(source_files, config)
 
     print_results_and_summary(source_files, config, time_load, time_run)
 
-    # TODO: return :error if there are issues so the CLI can exit with a status
-    #       code other than zero
-    :ok
+    issues =
+      source_files
+      |> Enum.flat_map(&(&1.issues))
+      |> Filter.important(config)
+      |> Filter.valid_issues(config)
+
+    case issues do
+      [] ->
+        :ok
+      issues ->
+        {:error, issues}
+    end
   end
 
   def load_and_validate_source_files(config) do
@@ -31,8 +43,7 @@ defmodule Credo.CLI.Command.List do
         |> Enum.partition(&(&1.valid?))
       end
 
-    invalid_source_files
-    |> Output.complain_about_invalid_source_files
+    Output.complain_about_invalid_source_files(invalid_source_files)
 
     {time_load, valid_source_files}
   end
@@ -54,37 +65,41 @@ defmodule Credo.CLI.Command.List do
     output = output_mod(config)
     output.print_before_info(source_files, config)
 
-    source_files
-    |> output.print_after_info(config, time_load, time_run)
+    output.print_after_info(source_files, config, time_load, time_run)
   end
 
 
   defp print_help do
-    ["Usage: ", :olive, "mix credo list [paths] [options]"]
-    |> UI.puts
-    """
+    usage = ["Usage: ", :olive, "mix credo list [paths] [options]"]
+    description =
+      """
 
-    Lists objects that Credo thinks can be improved ordered by their priority.
-    """
-    |> UI.puts
-    ["Example: ", :olive, :faint, "$ mix credo list lib/**/*.ex --format=oneline"]
-    |> UI.puts
-    """
+      Lists objects that Credo thinks can be improved ordered by their priority.
+      """
+    example = ["Example: ", :olive, :faint, "$ mix credo list lib/**/*.ex --format=oneline"]
+    options =
+      """
 
-    Arrows (↑ ↗ → ↘ ↓) hint at the importance of an issue.
+      Arrows (↑ ↗ → ↘ ↓) hint at the importance of an issue.
 
-    List options:
-      -a, --all             Show all issues
-      -A, --all-priorities  Show all issues including low priority ones
-      -c, --checks          Only include checks that match the given strings
-      -C, --config-name     Use the given config instead of "default"
-      -i, --ignore-checks   Ignore checks that match the given strings
-          --format          Display the list in a specific format (oneline,flycheck)
+      List options:
+        -a, --all             Show all issues
+        -A, --all-priorities  Show all issues including low priority ones
+        -c, --checks          Only include checks that match the given strings
+        -C, --config-name     Use the given config instead of "default"
+        -i, --ignore-checks   Ignore checks that match the given strings
+            --format          Display the list in a specific format (oneline,flycheck)
 
-    General options:
-      -v, --version         Show version
-      -h, --help            Show this help
-    """
-    |> UI.puts
+      General options:
+        -v, --version         Show version
+        -h, --help            Show this help
+      """
+
+    UI.puts(usage)
+    UI.puts(description)
+    UI.puts(example)
+    UI.puts(options)
+
+    :ok
   end
 end

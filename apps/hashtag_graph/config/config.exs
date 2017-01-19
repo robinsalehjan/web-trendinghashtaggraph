@@ -28,4 +28,9 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-import_config "prod.exs"
+#
+if Mix.env == :prod do
+  import_config "prod.exs"
+else
+  import_config "test.exs"
+end

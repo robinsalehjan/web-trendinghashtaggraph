@@ -1,10 +1,8 @@
 defmodule Credo.Check.Design.TagHelper do
-  @explanation ""
-
   alias Credo.Check.CodeHelper
 
   def tags(source, tag_name) do
-    {:ok, regex} = Regex.compile("[^\?]# #{tag_name}:? .+", "i")
+    {:ok, regex} = Regex.compile("(\\A|[^\\?])#\s*#{tag_name}:?\s*.+", "i")
 
     source
     |> CodeHelper.clean_strings_and_sigils
@@ -21,7 +19,7 @@ defmodule Credo.Check.Design.TagHelper do
       |> List.wrap
       |> Enum.map(&String.strip/1)
 
-    {index + 1, line, tag_list |> List.first}
+    {index + 1, line, List.first(tag_list)}
   end
 
   defp tags?({_line_no, _line, nil}), do: false

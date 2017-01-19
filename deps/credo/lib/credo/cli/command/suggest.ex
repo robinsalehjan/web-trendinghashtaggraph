@@ -11,9 +11,11 @@ defmodule Credo.CLI.Command.Suggest do
   alias Credo.CLI.Output
   alias Credo.Sources
 
+  @doc false
   def run(_args, %Config{help: true}), do: print_help()
   def run(_args, config) do
     {time_load, source_files} = load_and_validate_source_files(config)
+    config = Runner.prepare_config(source_files, config)
 
     out = output_mod(config)
     out.print_before_info(source_files, config)
@@ -29,8 +31,10 @@ defmodule Credo.CLI.Command.Suggest do
       |> Filter.valid_issues(config)
 
     case issues do
-      [] -> :ok
-      issues -> {:error, issues}
+      [] ->
+        :ok
+      issues ->
+        {:error, issues}
     end
   end
 
@@ -42,8 +46,7 @@ defmodule Credo.CLI.Command.Suggest do
         |> Enum.partition(&(&1.valid?))
       end
 
-    invalid_source_files
-    |> Output.complain_about_invalid_source_files
+    Output.complain_about_invalid_source_files(invalid_source_files)
 
     {time_load, valid_source_files}
   end
@@ -64,36 +67,40 @@ defmodule Credo.CLI.Command.Suggest do
   defp print_results_and_summary(source_files, config, time_load, time_run) do
     out = output_mod(config)
 
-    source_files
-    |> out.print_after_info(config, time_load, time_run)
+    out.print_after_info(source_files, config, time_load, time_run)
   end
 
   defp print_help do
-    ["Usage: ", :olive, "mix credo suggest [paths] [options]"]
-    |> UI.puts
-    """
+    usage = ["Usage: ", :olive, "mix credo suggest [paths] [options]"]
+    description =
+      """
 
-    Suggests objects from every category that Credo thinks can be improved.
-    """
-    |> UI.puts
-    ["Example: ", :olive, :faint, "$ mix credo suggest lib/**/*.ex --all -c names"]
-    |> UI.puts
-    """
+      Suggests objects from every category that Credo thinks can be improved.
+      """
+    example = ["Example: ", :olive, :faint, "$ mix credo suggest lib/**/*.ex --all -c names"]
+    options =
+      """
 
-    Arrows (↑ ↗ → ↘ ↓) hint at the importance of an issue.
+      Arrows (↑ ↗ → ↘ ↓) hint at the importance of an issue.
 
-    Suggest options:
-      -a, --all             Show all issues
-      -A, --all-priorities  Show all issues including low priority ones
-      -c, --checks          Only include checks that match the given strings
-      -C, --config-name     Use the given config instead of "default"
-      -i, --ignore-checks   Ignore checks that match the given strings
-          --format          Display the list in a specific format (oneline,flycheck)
+      Suggest options:
+        -a, --all             Show all issues
+        -A, --all-priorities  Show all issues including low priority ones
+        -c, --checks          Only include checks that match the given strings
+        -C, --config-name     Use the given config instead of "default"
+        -i, --ignore-checks   Ignore checks that match the given strings
+            --format          Display the list in a specific format (oneline,flycheck)
 
-    General options:
-      -v, --version         Show version
-      -h, --help            Show this help
-    """
-    |> UI.puts
+      General options:
+        -v, --version         Show version
+        -h, --help            Show this help
+      """
+
+    UI.puts(usage)
+    UI.puts(description)
+    UI.puts(example)
+    UI.puts(options)
+
+    :ok
   end
 end

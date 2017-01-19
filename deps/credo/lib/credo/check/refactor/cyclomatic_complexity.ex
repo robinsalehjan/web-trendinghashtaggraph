@@ -18,7 +18,7 @@ defmodule Credo.Check.Refactor.CyclomaticComplexity do
   @default_params [max_complexity: 9]
 
   @def_ops [:def, :defp, :defmacro]
-  # these have two outcomes: it succeds or does not
+  # these have two outcomes: it succeeds or does not
   @double_condition_ops [:if, :unless, :for, :try, :and, :or, :&&, :||]
   # these can have multiple outcomes as they are defined in their do blocks
   @multiple_condition_ops [:case, :cond]
@@ -44,9 +44,10 @@ defmodule Credo.Check.Refactor.CyclomaticComplexity do
 
   use Credo.Check
 
+  @doc false
   def run(%SourceFile{ast: ast} = source_file, params \\ []) do
     issue_meta = IssueMeta.for(source_file, params)
-    max_complexity = params |> Params.get(:max_complexity, @default_params)
+    max_complexity = Params.get(params, :max_complexity, @default_params)
 
     Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta, max_complexity))
   end
@@ -57,9 +58,14 @@ defmodule Credo.Check.Refactor.CyclomaticComplexity do
   end
   for op <- @def_ops do
     defp traverse({unquote(op), meta, arguments} = ast, issues, issue_meta, max_complexity) when is_list(arguments) do
-      complexity = ast |> complexity_for |> round
+      complexity =
+        ast
+        |> complexity_for
+        |> round
+
       if complexity > max_complexity do
         fun_name = CodeHelper.def_name(ast)
+
         {ast, issues ++ [issue_for(issue_meta, meta[:line], fun_name, max_complexity, complexity)]}
       else
         {ast, issues}
@@ -117,7 +123,11 @@ defmodule Credo.Check.Refactor.CyclomaticComplexity do
 
   defp do_block_complexity(nil, _), do: 0
   defp do_block_complexity(block, op) do
-    count = block |> List.wrap |> Enum.count
+    count =
+      block
+      |> List.wrap
+      |> Enum.count
+
     count * @op_complexity_map[op]
   end
 

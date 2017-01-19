@@ -1,13 +1,19 @@
 defmodule Credo.CLI.Output do
   alias Credo.CLI.Output.UI
+  alias Credo.Config
 
   @category_tag_map %{"refactor" => "F"}
 
   def check_tag(category, in_parens \\ true)
 
   def check_tag(category, in_parens) when is_binary(category) do
-    default_tag = category |> String.at(0) |> String.upcase
+    default_tag =
+      category
+      |> String.at(0)
+      |> String.upcase
+
     tag = Map.get(@category_tag_map, category, default_tag)
+
     if in_parens do
       "[#{tag}]"
     else
@@ -15,10 +21,14 @@ defmodule Credo.CLI.Output do
     end
   end
   def check_tag(category, in_parens) when is_atom(category) do
-    category |> to_string |> check_tag(in_parens)
+    category
+    |> to_string
+    |> check_tag(in_parens)
   end
   def check_tag(check_mod, in_parens) do
-    check_mod.category |> to_string |> check_tag(in_parens)
+    check_mod.category
+    |> to_string
+    |> check_tag(in_parens)
   end
 
   def check_color(category) when is_binary(category) do
@@ -32,14 +42,19 @@ defmodule Credo.CLI.Output do
     end
   end
   def check_color(category) when is_atom(category) do
-    category |> to_string |> check_color
+    category
+    |> to_string
+    |> check_color
   end
   def check_color(check_mod) do
-    check_mod.category |> to_string |> check_color
+    check_mod.category
+    |> to_string
+    |> check_color
   end
 
   def issue_color(issue) do
     priority = issue.priority
+
     cond do
       priority in    20..999 -> :red
       priority in    10..19  -> :red
@@ -78,23 +93,54 @@ defmodule Credo.CLI.Output do
 
   def term_columns(default \\ 80) do
     case :io.columns do
-      {:ok, columns} -> columns
-      _ -> default
+      {:ok, columns} ->
+        columns
+      _ ->
+        default
     end
   end
 
   def complain_about_invalid_source_files([]), do: nil
   def complain_about_invalid_source_files(invalid_source_files) do
     invalid_source_filenames = Enum.map(invalid_source_files, &(&1.filename))
-    [
-      :red, "Some source files could not be parsed correctly and are excluded:\n",
-    ]
-    |> UI.puts
+    output =
+      [
+        :reset, :bright, :orange, "info: ", :red, "Some source files could not be parsed correctly and are excluded:\n",
+      ]
 
-    invalid_source_filenames
+    UI.puts(output)
+
+    print_numbered_list(invalid_source_filenames)
+  end
+
+  def print_skipped_checks(%Config{skipped_checks: []}), do: nil
+  def print_skipped_checks(%Config{skipped_checks: skipped_checks}) do
+    msg =
+      [
+        :reset, :bright, :orange, "info: ", :reset, :faint, "the following checks were skipped because they're not compatible with\n",
+        :reset, :faint, "your version of Elixir (#{System.version()}). Upgrade to the newest version of Elixir to\n",
+        :reset, :faint, "get the most out of Credo!\n",
+      ]
+    UI.puts
+    UI.puts(msg)
+
+    skipped_checks
+    |> Enum.map(&check_name/1)
+    |> print_numbered_list
+  end
+
+  defp check_name({check, _check_info}), do: check_name({check})
+  defp check_name({check}) do
+    check
+    |> to_string
+    |> String.replace(~r/^Elixir\./, "")
+  end
+
+  defp print_numbered_list(list) do
+    list
     |> Enum.with_index
-    |> Enum.flat_map(fn({filename, index}) ->
-        [:reset, "#{index+1})" |> String.rjust(5), :faint, " #{filename}\n"]
+    |> Enum.flat_map(fn({string, index}) ->
+        [:reset, String.rjust("#{index+1})", 5), :faint, " #{string}\n"]
       end)
     |> UI.puts
   end

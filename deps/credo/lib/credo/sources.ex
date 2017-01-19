@@ -14,13 +14,16 @@ defmodule Credo.Sources do
   iex> Sources.find(%Credo.Config{files: %{excluded: ["not_me.ex"], included: ["*.ex"]}})
 
   iex> Sources.find(%Credo.Config{files: %{excluded: [/messy/], included: ["lib/mix", "root.ex"]}})
-
   """
   def find(%Credo.Config{files: %{included: [filename]}, read_from_stdin: true}) do
-    filename |> source_file_from_stdin() |> List.wrap
+    filename
+    |> source_file_from_stdin()
+    |> List.wrap
   end
   def find(%Credo.Config{read_from_stdin: true}) do
-    @stdin_filename |> source_file_from_stdin() |> List.wrap
+    @stdin_filename
+    |> source_file_from_stdin()
+    |> List.wrap
   end
   def find(%Credo.Config{files: files}) do
     MapSet.new
@@ -29,16 +32,18 @@ defmodule Credo.Sources do
     |> Enum.map(&to_source_file/1)
   end
   def find(paths) when is_list(paths) do
-    paths
-    |> Enum.flat_map(&find/1)
+    Enum.flat_map(paths, &find/1)
   end
   def find(path) when is_binary(path) do
-    path |> recurse_path()
+    recurse_path(path)
   end
 
   defp include(files, []), do: files
   defp include(files, [path | remaining_paths]) do
-    include_paths = recurse_path(path) |> Enum.into(MapSet.new)
+    include_paths =
+      path
+      |> recurse_path
+      |> Enum.into(MapSet.new)
 
     files
     |> MapSet.union(include_paths)
@@ -52,7 +57,10 @@ defmodule Credo.Sources do
     |> exclude([pattern | remaining_patterns])
   end
   defp exclude(files, [pattern | remaining_patterns]) when is_binary(pattern) do
-    exclude_paths = recurse_path(pattern) |> Enum.into(MapSet.new)
+    exclude_paths =
+      pattern
+      |> recurse_path
+      |> Enum.into(MapSet.new)
 
     files
     |> MapSet.difference(exclude_paths)
@@ -79,7 +87,7 @@ defmodule Credo.Sources do
           |> Enum.flat_map(&recurse_path/1)
       end
 
-    paths |> Enum.map(&Path.expand/1)
+    Enum.map(paths, &Path.expand/1)
   end
 
   defp to_source_file(filename) do
@@ -89,8 +97,7 @@ defmodule Credo.Sources do
   end
 
   defp source_file_from_stdin(filename) do
-    read_from_stdin!()
-    |> SourceFile.parse(filename)
+    SourceFile.parse(read_from_stdin!(), filename)
   end
 
   defp read_from_stdin! do
@@ -100,9 +107,12 @@ defmodule Credo.Sources do
 
   defp read_from_stdin(source \\ "") do
     case IO.read(:stdio, :line) do
-      {:error, reason} -> {:error, reason}
-      :eof             -> {:ok, source}
-      data             -> source = source <> data
+      {:error, reason} ->
+        {:error, reason}
+      :eof ->
+        {:ok, source}
+      data ->
+        source = source <> data
         read_from_stdin(source)
     end
   end
