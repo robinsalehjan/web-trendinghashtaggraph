@@ -1,7 +1,10 @@
 defmodule HashtagGraph.GraphServer do
   @moduledoc """
-  At 30 minutes intervals updates the state of the graph structure,
-  defined in the `Graph.ex` module.
+  At 30 minutes intervals updates the state of the graph datastructure to reflect
+  the trending hashtags and tweets on Twitter.
+
+  This is a singleton GenServer, for concurrent access it's recommended to
+  use the `HashtagGraph.GraphCache` module.
   """
   use GenServer
 
@@ -11,9 +14,8 @@ defmodule HashtagGraph.GraphServer do
 
   ### Client ###
 
-  def start_link(opts \\ []) do
-    state = {:ok, []}
-    {:ok, pid} = GenServer.start_link(__MODULE__, state, name: GraphServer)
+  def start_link() do
+    GenServer.start_link(__MODULE__, {:ok, []}, name: GraphServer)
   end
 
   def fetch_graph() do
@@ -32,16 +34,26 @@ defmodule HashtagGraph.GraphServer do
     {:reply, state, state}
   end
 
-  def handle_info(:init, _state) do
-    {:ok, new_state} = Graph.create_graph()
-    schedule_api_call()
-    {:noreply, new_state}
+  def handle_info(:init, state) do
+    with {:ok, new_state} <- Graph.create_graph() do
+      schedule_api_call()
+      {:noreply, new_state}
+    else
+      {:error, _} ->
+        schedule_api_call()
+        {:noreply, state}
+    end
   end
 
-  def handle_info(:update, _state) do
-    {:ok, new_state} = Graph.create_graph()
-    schedule_api_call()
-    {:noreply, new_state}
+  def handle_info(:update, state) do
+    with {:ok, new_state} <- Graph.create_graph() do
+      schedule_api_call()
+      {:noreply, new_state}
+    else
+      {:error, _} ->
+        schedule_api_call()
+        {:noreply, state}
+    end
   end
 
   # Catch-all clause for unknown messages
