@@ -12,3 +12,10 @@ View the most trending hashtags on Twitter and see how they are related to other
 - Creating and deploying Erlang releases with exrm
 - Become comfortable with the actor model
 - Try out front-end development
+
+
+# Note to self
+
+- When using 3rd party API's always create two oauth credentials. 
+  - One for testing so it can be used in an CI environment. Then you can run transparen tests on the CI infrastructure without counting towards the rate limit for the credentials used in production.
+  - The second for production, which is the one used out in the wild.
