@@ -20,4 +20,4 @@ View the most trending hashtags on Twitter and see how they are related to other
  
   1. One for testing so it can be used in an CI environment. Then you can run transparent tests on the CI infrastructure, without it counting towards the rate limit for the oauth credentials used in production.
 
-  2. The second for production.
+  2. The second one for the application deployed to production.
