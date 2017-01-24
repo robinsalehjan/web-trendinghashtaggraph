@@ -19,7 +19,7 @@ defmodule HashtagGraph.GraphServer do
   end
 
   def fetch_graph() do
-    GenServer.call(@name, :get, 15_000)
+    GenServer.call(@name, :get, 30_000)
   end
 
   ### Callbacks ###
