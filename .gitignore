@@ -21,4 +21,5 @@ erl_crash.dump
 
 # Ignore these for all apps in the umbrella project
 .DS_Store
-.env
+prod.env
+test.env
