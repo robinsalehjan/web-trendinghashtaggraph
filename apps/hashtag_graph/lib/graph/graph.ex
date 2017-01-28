@@ -15,10 +15,7 @@ defmodule HashtagGraph.Graph do
 
   See https://developer.yahoo.com/geo/geoplanet/ for other geolocation identifiers.
   """
-  @spec create_graph(Integer.t | String.t) :: {:ok,
-                                                [HashtagGraph.Graph.Vertex.t]}
-                                              | {:error, String.t}
-                                              | no_return
+  @spec create_graph() :: {:ok, [vertex]} | {:reschedule, []}
 
   def create_graph(woed \\ @worldwide_yahoo_where_on_earth_id) do
     with {:ok, _remaining} <- exceeded_limit?(),
@@ -28,7 +25,7 @@ defmodule HashtagGraph.Graph do
     do
       {:ok, Enum.map(queries, &get_vertex/1)}
     else
-      {:error, reason} -> {:error, reason}
+      {:reschedule, []} -> {:reschedule, []}
       _ -> throw RuntimeError.message("Error #{System.stacktrace}")
     end
   end
@@ -36,8 +33,7 @@ defmodule HashtagGraph.Graph do
   @doc """
   Fetches the top 10 trending hashtags on Twitter based on the Yahoo! Where On Earth ID.
   """
-  @spec trending_hashtags(Integer.t | String.t) :: {:ok,
-                                                     [ExTwitter.Model.Trend.t]}
+  @spec trending_hashtags(Integer.t | String.t) :: {:ok, [hashtag]}
                                                    | {:error, List.t}
 
   def trending_hashtags(woed) when is_integer(woed) do
@@ -76,18 +72,22 @@ defmodule HashtagGraph.Graph do
     Kernel.get_in(limit, [:resources, :search, :"/search/tweets", :remaining])
   end
 
-  # Fetches the first 5 tweets that uses the hashtag given as argument
-  @spec tweets(String.t) :: {:ok, [ExTwitter.Model.Tweet.t]}
-                            | {:error, List.t}
-                            | no_return
+
+  # Fetches 5 tweets with the hashtag provided as argument
+  @spec tweets(String.t) :: {:ok, [tweet]} | {:reschedule, []}
 
   defp tweets(hashtag) do
-    response = ExTwitter.search(hashtag, count: 5)
+    response =
+      try do
+        {:ok, ExTwitter.search(hashtag, count: 5)}
+      catch
+        _ -> {:reschedule, []}
+      end
 
-    cond do
-      is_list(response) -> {:ok, response}
-      is_nil(response) ->  {:error, []}
-      true -> throw RuntimeError.message("Error\n#{System.stacktrace}")
+    case response do
+      {:ok, response} -> {:ok, response}
+      {:reschedule, []} ->  {:reschedule, []}
+      _ -> throw RuntimeError.message("Error\n#{System.stacktrace}")
     end
   end
 
@@ -98,7 +98,10 @@ defmodule HashtagGraph.Graph do
                                 | {:error, String.t}
                                 | no_return
 
-  def get_vertex(hashtag) do
+  # Create a vertex with the given hashtag and recent tweets as adjacent vertices.
+  @spec get_vertex(String.t) :: vertex | {:reschedule, []}
+
+  defp get_vertex(hashtag) do
     with {:ok, _remaining} <- exceeded_limit?(),
       {:ok, tweets} <- tweets(hashtag),
       valid_tweets <- Stream.filter(tweets, &(Map.get(&1, :text) != nil)),
@@ -106,7 +109,7 @@ defmodule HashtagGraph.Graph do
     do
       %Vertex{hashtag: hashtag, edges: edges}
     else
-      {:error, reason} -> {:error, reason}
+      {:reschedule, []} -> {:reschedule, []}
       true -> throw RuntimeError.message("Error\n#{System.stacktrace}")
     end
   end

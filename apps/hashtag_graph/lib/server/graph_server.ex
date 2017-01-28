@@ -36,22 +36,22 @@ defmodule HashtagGraph.GraphServer do
 
   def handle_info(:init, state) do
     with {:ok, new_state} <- Graph.create_graph() do
-      schedule_api_call()
+      schedule_api_call(:ok)
       {:noreply, new_state}
     else
-      {:error, _} ->
-        schedule_api_call()
+      {:reschedule, _} ->
+        schedule_api_call(:reschedule)
         {:noreply, state}
     end
   end
 
   def handle_info(:update, state) do
     with {:ok, new_state} <- Graph.create_graph() do
-      schedule_api_call()
+      schedule_api_call(:ok)
       {:noreply, new_state}
     else
-      {:error, _} ->
-        schedule_api_call()
+      {:reschedule, _} ->
+        schedule_api_call(:reschedule)
         {:noreply, state}
     end
   end
@@ -61,7 +61,13 @@ defmodule HashtagGraph.GraphServer do
     {:noreply, state}
   end
 
-  defp schedule_api_call() do
+  # Schedules a API call to execute in 30 minutes.
+  defp schedule_api_call(:ok) do
     Process.send_after(@name, :update, 1000 * 60 * 30)
+  end
+
+  # Reschedules the failed API call to execute in 1 minute.
+  defp schedule_api_call(:reschedule) do
+    Process.send_after(@name, :update, 1000 * 60 * 1)
   end
 end
