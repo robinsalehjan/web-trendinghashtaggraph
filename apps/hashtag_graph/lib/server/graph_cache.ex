@@ -1,7 +1,7 @@
 defmodule HashtagGraph.GraphCache do
   @moduledoc """
-  Creates a cache of the current state of the `GraphServer` state. The cache
-  is per process and updates at it's current state, at a interval of 15 minutes.
+  Creates a cache around the state of the `GraphServer`. Periodically every 30
+  minutes the state of the `GraphCache` process is updated to reflect the state of the `GraphServer`
   """
   use GenServer
 
@@ -14,13 +14,13 @@ defmodule HashtagGraph.GraphCache do
   end
 
   def fetch_graph(pid) do
-    GenServer.call(pid, :get, 15_000)
+    GenServer.call(pid, :get, 10_000)
   end
 
   ### Callbacks ###
 
   def init(:ok) do
-    send(self(), :init)
+    send(self(), :init)  # Delay state initialization
     {:ok, []}
   end
 
@@ -45,7 +45,8 @@ defmodule HashtagGraph.GraphCache do
     {:noreply, state}
   end
 
+  # Update the internal genserver state every 15 minutes
   defp schedule_update() do
-    Process.send_after(self(), :update, 1000 * 60 * 30)
+    Process.send_after(self(), :update, 1000 * 60 * 15)
   end
 end

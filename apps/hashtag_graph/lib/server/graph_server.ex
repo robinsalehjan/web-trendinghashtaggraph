@@ -19,7 +19,7 @@ defmodule HashtagGraph.GraphServer do
   end
 
   def fetch_graph() do
-    GenServer.call(@name, :get, 30_000)
+    GenServer.call(@name, :get, 10_000)
   end
 
   ### Callbacks ###
@@ -39,6 +39,10 @@ defmodule HashtagGraph.GraphServer do
       schedule_api_call(:ok)
       {:noreply, new_state}
     else
+      {:api_limit, _} ->
+        schedule_api_call(:ok)
+        {:noreply, state}
+
       {:reschedule, _} ->
         schedule_api_call(:reschedule)
         {:noreply, state}
@@ -50,6 +54,10 @@ defmodule HashtagGraph.GraphServer do
       schedule_api_call(:ok)
       {:noreply, new_state}
     else
+      {:api_limit, _} ->
+        schedule_api_call(:ok)
+        {:noreply, state}
+
       {:reschedule, _} ->
         schedule_api_call(:reschedule)
         {:noreply, state}
@@ -61,13 +69,13 @@ defmodule HashtagGraph.GraphServer do
     {:noreply, state}
   end
 
-  # Schedules a API call to execute in 30 minutes.
+  # Schedules a API call to execute in 15 minutes.
   defp schedule_api_call(:ok) do
-    Process.send_after(@name, :update, 1000 * 60 * 30)
+    Process.send_after(@name, :update, 1000 * 60 * 15)
   end
 
-  # Reschedules the failed API call to execute in 1 minute.
+  # Reschedules the failed API call to execute in 10 seconds.
   defp schedule_api_call(:reschedule) do
-    Process.send_after(@name, :update, 1000 * 60 * 1)
+    Process.send_after(@name, :update, 10_000)
   end
 end
