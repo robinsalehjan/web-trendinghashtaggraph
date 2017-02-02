@@ -13,22 +13,22 @@ export var App = {
 
       layout: {
         name: 'cose',
-        ready: function(){},
-        stop: function(){},
+        ready: undefined,
+        stop: undefined,
         animate: true,
         animationThreshold: 100,
         refresh: 20,
         fit: true,
-        padding: 10,
+        padding: 5,
         boundingBox: undefined,
         randomize: true,
-        componentSpacing: 50,
+        componentSpacing: 100,
         nodeOverlap: 0,
-        idealEdgeLength: function( edge ){ return 500; },
-        edgeElasticity: function( edge ){ return 500; },
-        nestingFactor: 1,
+        idealEdgeLength: function(edge ){ return 400; },
+        edgeElasticity: function(edge){ return 500; },
+        nestingFactor: 0.25,
         gravity: 10,
-        numIter: 100,
+        numIter: 50,
         initialTemp: 10,
         coolingFactor: 0.25,
         minTemp: 1.0,
@@ -39,9 +39,11 @@ export var App = {
         {
           selector: 'node',
           style: {
-            'height': 10,
-            'width': 10,
-            'background-color': '#0084b4',
+            'height': 70,
+            'width': 70,
+            'font-size': '40',
+            'color': 'white',
+            'background-color': 'white',
             'label': 'data(id)'
           }
         },
@@ -49,9 +51,9 @@ export var App = {
         {
           selector: 'edge',
           style: {
-            'width': 5,
+            'width': 10,
             'opacity': 1.0,
-            'line-color': '#0084b4'
+            'line-color': '#40e0d0'
           }
         }
       ],
