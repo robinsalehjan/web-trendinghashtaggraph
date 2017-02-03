@@ -2,31 +2,30 @@ class Graph {
   constructor() {
     let request = this.send_request();
     let response = request.response;
-    let data = this.parse_request(response);
-    let representation = this.construct_graph(data);
+    let obj = this.parse_request(response);
+    let representation = this.construct_graph(obj);
     return representation;
   }
 
   send_request() {
     let request = new XMLHttpRequest();
-    request.open("GET", "http://localhost:4000/api/graph", false);
+    request.open("GET", "https://trendinghashtaggraph.herokuapp.com/api/graph", false);
     request.send();
     return request;
   }
 
   parse_request(response) {
-    if (!response.includes("200")) {
-      let msg = `Expected: String\nGot:${typeof(response)}`
+    if (typeof response !== 'string') {
+      let msg = `Expected: string\nGot: ${typeof(data)}`
       throw new TypeError(msg);
     }
     let obj = JSON.parse(response);
-    let data = obj[200];
-    return data;
+    return obj;
   }
 
   construct_graph(data) {
-    if (!(data instanceof Object)) {
-      let msg = `Expected: Object\nGot:${typeof(data)}`
+    if (typeof data !== 'object') {
+      let msg = `Expected: object\nGot: ${typeof(data)}`
       throw new TypeError(msg);
     }
 

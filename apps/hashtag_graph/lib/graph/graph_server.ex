@@ -7,6 +7,7 @@ defmodule HashtagGraph.GraphServer do
   use the `HashtagGraph.GraphCache` module.
   """
   use GenServer
+  require Logger
 
   alias HashtagGraph.Graph, as: Graph
 
@@ -57,10 +58,12 @@ defmodule HashtagGraph.GraphServer do
       {:noreply, new_state}
     else
       {:api_limit, _} ->
+        Logger.info("Exceeded API quota trying to update state")
         schedule_api_call(:ok)
         {:noreply, state}
 
       {:reschedule, _} ->
+        Logger.warn("Rescheduling API call due to error while updating state")
         schedule_api_call(:reschedule)
         {:noreply, state}
     end
@@ -74,10 +77,12 @@ defmodule HashtagGraph.GraphServer do
   # Schedules a API call to execute in 15 minutes.
   defp schedule_api_call(:ok) do
     Process.send_after(@name, :update, 1000 * 60 * 15)
+    Logger.info("Scheduled API call to fetch API data after 15 minutes")
   end
 
   # Reschedules the failed API call to execute in 5 seconds.
   defp schedule_api_call(:reschedule) do
     Process.send_after(@name, :update, 5_000)
+    Logger.info("Rescheduled API call to execute after 5 seconds")
   end
 end

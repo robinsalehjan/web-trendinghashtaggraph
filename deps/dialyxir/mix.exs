@@ -4,13 +4,15 @@ defmodule Dialyxir.Mixfile do
   def project do
     [
       app: :dialyxir,
-      version: "0.4.3",
+      version: "0.4.4",
       elixir: "> 1.3.2",
       description: description(),
       package: package(),
       deps: [ {:ex_doc, ">= 0.0.0", only: :dev} ],
       dialyzer: [ plt_apps: [:dialyzer, :elixir, :kernel, :mix, :stdlib],
-                  ignore_warnings: ".dialyzer_ignore"],
+                  ignore_warnings: ".dialyzer_ignore",
+                  flags: ["-Wunmatched_returns", "-Werror_handling", "-Wunderspecs"]
+                ],
 
       # Docs
       name: "Dialyxir",

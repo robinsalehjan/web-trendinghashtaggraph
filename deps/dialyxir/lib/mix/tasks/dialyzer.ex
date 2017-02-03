@@ -95,7 +95,7 @@ defmodule Mix.Tasks.Dialyzer do
       {opts, _, dargs} = OptionParser.parse(args, strict: @command_options)
       dargs = Enum.map(dargs, &elem(&1,0))
 
-      no_check = case {in_child?, no_plt?} do
+      no_check = case {in_child?(), no_plt?()} do
                    {true, true} ->
                      IO.puts "In an Umbrella child and no PLT found - building that first."
                      build_parent_plt()
@@ -107,7 +107,7 @@ defmodule Mix.Tasks.Dialyzer do
                  end
 
       unless opts[:no_compile], do: Mix.Project.compile([])
-      unless no_check, do: check_plt()
+      _ = unless no_check, do: check_plt()
       unless opts[:plt] do
         ignore_warnings = Project.dialyzer_ignore_warnings()
         args = List.flatten [dargs, "--no_check_plt", "--fullpath", "--plt", "#{Project.plt_file()}", dialyzer_flags(), Project.dialyzer_paths()]
@@ -138,19 +138,19 @@ defmodule Mix.Tasks.Dialyzer do
     not File.exists?(Project.deps_plt())
   end
 
-  defp dialyze(args, halt, ignore_warnings) do
+  defp dialyze(args, halt, ignore_warnings, format \\ &Dialyxir.Output.format/1) do
     IO.puts "Starting Dialyzer"
     IO.puts "dialyzer " <> Enum.join(args, " ")
     {ret, exit_status} = System.cmd("dialyzer", args, [])
     exit_status = case ignore_warnings do
       nil ->
-        IO.puts ret
+        IO.puts format.(ret)
         exit_status
       _ ->
         pattern = File.read!(ignore_warnings)
         lines = Project.filter_warnings(ret, pattern)
         for line <- lines do
-          IO.puts line
+          IO.puts format.(line)
         end
 
         # `lines` is like follows:
@@ -179,7 +179,10 @@ defmodule Mix.Tasks.Dialyzer do
     # It would seem more natural to use Mix.in_project here to start in our parent project.
     # However part of the app.tree resolution includes loading all sub apps, and we will
     # hit an exception when we try to do that for *this* child, which is already loaded.
-    System.cmd("mix", ["dialyzer", "--plt"], opts)
+    {out, rc} = System.cmd("mix", ["dialyzer", "--plt"], opts)
+    if rc != 0 do
+      IO.puts("Error building parent PLT, process returned code: #{rc}\n#{out}")
+    end
   end
 
 

@@ -48,7 +48,19 @@ defmodule ExTwitter.Model.User do
     protected: nil, screen_name: nil, show_all_inline_media: nil,
     status: nil, statuses_count: nil, time_zone: nil, url: nil,
     utc_offset: nil, verified: nil, withheld_in_countries: nil,
-    withheld_scope: nil
+    withheld_scope: nil, email: nil
+
+  @type t :: %__MODULE__{}
+end
+
+defmodule ExTwitter.Model.ProfileBanner do
+  @moduledoc """
+  Profile Banner object.
+
+  ## Reference
+  https://dev.twitter.com/rest/reference/get/users/profile_banner
+  """
+  defstruct sizes: nil
 
   @type t :: %__MODULE__{}
 end

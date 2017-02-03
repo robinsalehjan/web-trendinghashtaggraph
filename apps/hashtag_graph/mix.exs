@@ -19,7 +19,7 @@ defmodule HashtagGraph.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application() do
-    [extra_applications: [:logger, :eex, :public_key, :extwitter],
+    [extra_applications: [:logger, :eex, :public_key, :extwitter, :rollbax],
       mod: {HashtagGraph, []}]
   end
 

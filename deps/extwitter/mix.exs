@@ -3,7 +3,7 @@ defmodule ExTwitter.Mixfile do
 
   def project do
     [ app: :extwitter,
-      version: "0.8.0",
+      version: "0.8.2",
       elixir: ">= 1.0.0",
       deps: deps(),
       description: description(),
@@ -36,9 +36,9 @@ defmodule ExTwitter.Mixfile do
       {:oauther, "~> 1.1"},
       {:poison, "~> 2.0"},
       {:exvcr, "~> 0.8", only: :test},
-      {:excoveralls, "~> 0.5", only: :test},
+      {:excoveralls, "~> 0.6", only: :test},
       {:meck, "~> 0.8.2", only: [:dev, :test]},
-      {:mock, github: "jjh42/mock", only: [:dev, :test]},
+      {:mock, "~> 0.2", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :docs]},
       {:earmark, "~> 0.1", only: [:dev, :docs]},
       {:inch_ex, "~> 0.5.1", only: :docs},
