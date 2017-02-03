@@ -3,6 +3,7 @@ defmodule HashtagGraphCacheTest do
 
   use ExUnit.Case
 
+  alias HashtagGraph.Graph, as: Graph
   alias HashtagGraph.GraphServer, as: GraphServer
   alias HashtagGraph.GraphCache, as: GraphCache
   alias HashtagGraph.GraphCacheSupervisor, as: GraphCacheSupervisor
@@ -25,5 +26,10 @@ defmodule HashtagGraphCacheTest do
      assert Kernel.length(state) != 0
 
      assert GraphCacheSupervisor.delete_child(child_pid) == :ok
+   end
+
+   test "exceeds api limit" do
+     {:ok, limit} = Graph.exceeded_limit?()
+     assert limit >= 0
    end
 end

@@ -23,7 +23,7 @@ defmodule Web.Mixfile do
   def application do
     [mod: {Web, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-                    :gettext, :hashtag_graph, :rollbax]]
+                    :gettext, :hashtag_graph]]
   end
 
   # Specifies which paths to compile per environment.
