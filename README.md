@@ -2,11 +2,11 @@
 [![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
-URL: https://trendinghashtaggraph.herokuapp.com
-
-API: https://trendinghashtaggraph.herokuapp.com/api/graph
-
 View the most trending hashtags on Twitter and see how they are related to other tweets or hashtags.
+
+URL: https://trendinghashtaggraph.herokuapp.com
+JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
+
 
 # Goals for this project
 
