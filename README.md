@@ -3,6 +3,7 @@
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
 URL: https://trendinghashtaggraph.herokuapp.com
+
 API: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 View the most trending hashtags on Twitter and see how they are related to other tweets or hashtags.
