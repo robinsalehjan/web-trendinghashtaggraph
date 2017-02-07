@@ -2,12 +2,15 @@
 [![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
-View the most trending hashtags on Twitter and see how they are related to other hashtags.
+URL: https://trendinghashtaggraph.herokuapp.com
+API: https://trendinghashtaggraph.herokuapp.com/api/graph
+
+View the most trending hashtags on Twitter and see how they are related to other tweets or hashtags.
 
 # Goals for this project
 
 - Learn how to use:
-  - Packer to create production deployable images and/or dockerfile
+  - Packer to create production deployable images/containers
   - Terraform for automating the creation of our cloud infrastructure
 - Creating and deploying Erlang releases with exrm
 - [x] Become comfortable with the actor model
