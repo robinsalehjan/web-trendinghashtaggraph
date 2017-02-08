@@ -2,12 +2,16 @@
 [![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
-View the most trending hashtags on Twitter and see how they are related to other tweets or hashtags.
+See the most trending hashtags on Twitter and see how they are related to other tweets or hashtags.
 
 URL: https://trendinghashtaggraph.herokuapp.com
 
 JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
+![ScreenShot](https://github.com/robinsjdotcom/TrendingHashtagGraph/blob/master/Screenshot.png)
+
+# Blog posts
+[Checklist for deploying umbrella applications to Heroku](https://medium.com/@robinsjdotcom/checklist-for-deploying-umbrella-applications-to-heroku-74a79e07e21f#.qspvspxt4) - While trying to deploy this umbrella application to Heroku, I often found inconsistent resources. Therefore I made this post for the proper configuration on how to do so.
 
 # Goals for this project
 
