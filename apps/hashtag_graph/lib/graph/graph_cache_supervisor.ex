@@ -33,6 +33,6 @@ defmodule HashtagGraph.GraphCacheSupervisor do
       worker(HashtagGraph.GraphCache, [], restart: :transient)
     ]
 
-    supervise(children, strategy: :simple_one_for_one)
+    supervise(children, strategy: :simple_one_for_one, max_restarts: 10, max_seconds: 5)
   end
 end
