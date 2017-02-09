@@ -11,9 +11,9 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 ![ScreenShot](https://github.com/robinsjdotcom/TrendingHashtagGraph/blob/master/Screenshot.png)
 
 # Blog posts
-[Checklist for deploying umbrella applications to Heroku](https://medium.com/@robinsjdotcom/checklist-for-deploying-umbrella-applications-to-heroku-74a79e07e21f#.qspvspxt4) - While trying to deploy this umbrella application to Heroku, I often found inconsistent resources. Therefore I made this post for the proper configuration on how to do so.
-
 [Periodic scheduling using a GenServer](https://medium.com/@robinsjdotcom/periodic-scheduling-using-a-genserver-33242b439bc4#.1d2ahei60) - This is often asked and pondered about from people just starting with Elixir. In the post I detail one caveat of doing so and how to avoid it, as well as a implementation for the better ways of doing so.
+
+[Checklist for deploying umbrella applications to Heroku](https://medium.com/@robinsjdotcom/checklist-for-deploying-umbrella-applications-to-heroku-74a79e07e21f#.qspvspxt4) - While trying to deploy this umbrella application to Heroku, I often found inconsistent resources. Therefore I made this post for the proper configuration on how to do so.
 
 # Goals for this project
 
