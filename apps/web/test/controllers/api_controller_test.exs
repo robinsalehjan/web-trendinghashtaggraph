@@ -4,7 +4,8 @@ defmodule Web.ApiControllerTest do
   use Plug.Test
 
   test "/api/graph returns json object" do
-    response = conn(:get, "/api/graph") |> send_request
+    request = conn(:get, "/api/graph")
+    response = send_request(request)
     assert response.status == 200
     assert response.resp_body != nil
   end

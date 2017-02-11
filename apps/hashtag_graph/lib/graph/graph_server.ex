@@ -9,11 +9,16 @@ defmodule HashtagGraph.GraphServer do
   use GenServer
   require Logger
 
+  alias HashtagGraph.Graph.Vertex, as: Vertex
   alias HashtagGraph.Graph, as: Graph
+
+  @type vertex :: Vertex.t
+  @type graph :: [%Vertex{hashtag: String.t, edges: [vertex]}]
 
   @name GraphServer
 
   ### Client ###
+  @spec start_link() :: tuple
 
   def start_link() do
     GenServer.start_link(__MODULE__, {:ok, []}, name: GraphServer)
@@ -22,20 +27,28 @@ defmodule HashtagGraph.GraphServer do
   @doc """
   Returns the current state of the graph datastructure.
   """
+  @spec fetch_graph() :: graph
+                         | any
+
   def fetch_graph() do
     GenServer.call(@name, :get, 30_000)
   end
 
   ### Callbacks ###
+  @spec init({atom, []}) :: {atom, []}
 
   def init({:ok, state}) do
     send(@name, :init)  # Delay state initialization
     {:ok, state}
   end
 
+  @spec handle_call(atom, pid :: identifier, graph) :: {atom, graph, graph}
+
   def handle_call(:get, _from, state) do
     {:reply, state, state}
   end
+
+  @spec handle_info(atom, graph) :: {atom, graph}
 
   def handle_info(:init, state) do
     with {:ok, new_state} <- Graph.create_graph() do
@@ -51,6 +64,8 @@ defmodule HashtagGraph.GraphServer do
         {:noreply, state}
     end
   end
+
+  @spec handle_info(atom, graph) :: {atom, graph}
 
   def handle_info(:update, state) do
     with {:ok, new_state} <- Graph.create_graph() do
@@ -70,19 +85,24 @@ defmodule HashtagGraph.GraphServer do
   end
 
   # Catch-all clause for unknown messages
+  @spec handle_info(atom, graph) :: {atom, graph}
+
   def handle_info(_msg, state) do
     {:noreply, state}
   end
 
   # Schedules a API call to execute in 15 minutes.
+  @spec schedule_api_call(atom) :: identifier
+
   defp schedule_api_call(:ok) do
-    Process.send_after(@name, :update, 1000 * 60 * 15)
     Logger.info("Scheduled API call to fetch API data after 15 minutes")
+    Process.send_after(@name, :update, 1000 * 60 * 15)
   end
 
   # Reschedules the failed API call to execute in 5 seconds.
+
   defp schedule_api_call(:reschedule) do
-    Process.send_after(@name, :update, 5_000)
     Logger.info("Rescheduled API call to execute after 5 seconds")
+    Process.send_after(@name, :update, 5_000)
   end
 end
