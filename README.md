@@ -19,7 +19,7 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 - Learn how to use:
   - Packer to create production deployable images/containers
-  - Terraform for automating the creation of our cloud infrastructure
+  - Terraform for automating the creation of cloud infrastructure
 - Creating and deploying Erlang releases with exrm
 - [x] Become comfortable with the actor model
 - [x] Build something with Javascript
