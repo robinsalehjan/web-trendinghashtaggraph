@@ -8,22 +8,18 @@ otp_release:
 
 env:
   global:
-   - MIX_ENV=test
-   - PULL_REQUEST_ID=$TRAVIS_PULL_REQUEST
+    - MIX_ENV=test
+#    - PULL_REQUEST_ID=$TRAVIS_PULL_REQUEST
 
 install:
   - mix local.rebar --force
   - mix local.hex --force
   - mix deps.get
 
-before_script:
-  - rvm install ruby-2.3.1
-  - gem install pronto-credo
-
-cache:
- directories:
-   — /home/travis/.rvm/
+# before_script:
+#  - rvm install ruby-2.3.1
+#  - gem install pronto-credo
 
 script:
-  — if [ $PULL_REQUEST_ID != false ]; then pronto run -f github_pr; fi
+#  — if [ $PULL_REQUEST_ID != false ]; then pronto run -f github_pr; fi
   - mix test
