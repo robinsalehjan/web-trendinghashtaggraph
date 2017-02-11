@@ -8,6 +8,8 @@ defmodule HashtagGraph.GraphCacheSupervisor do
 
   ### Client ###
 
+  @spec start_link() :: tuple
+
   def start_link() do
     Supervisor.start_link(__MODULE__, :ok, name: @name)
   end
@@ -15,6 +17,8 @@ defmodule HashtagGraph.GraphCacheSupervisor do
   @doc """
   Add a `HashtagGraph.GraphCache` process to the supervisor.
   """
+  @spec add_child() :: tuple
+
   def add_child() do
     Supervisor.start_child(@name, [])
   end
@@ -22,11 +26,14 @@ defmodule HashtagGraph.GraphCacheSupervisor do
   @doc """
   Delete the `child_pid` process process from the supervisor
   """
+  @spec delete_child(pid) :: :ok | {:error, atom}
+
   def delete_child(child_pid) do
     Supervisor.terminate_child(@name, child_pid)
   end
 
   ### Callbacks ###
+  @spec init(:ok) :: {:ok, tuple}
 
   def init(:ok) do
     children = [

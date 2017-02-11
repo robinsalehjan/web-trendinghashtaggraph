@@ -3,6 +3,8 @@ defmodule Web.ApiController do
   alias HashtagGraph.GraphCacheSupervisor, as: GraphCacheSupervisor
   alias HashtagGraph.GraphCache, as: GraphCache
 
+  @spec index(Plug.Conn.t, any) :: Plug.Conn.t
+
   def index(conn, _params) do
     {:ok, child_pid} = GraphCacheSupervisor.add_child()
     state = GraphCache.fetch_graph(child_pid)

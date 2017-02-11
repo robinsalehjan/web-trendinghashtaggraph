@@ -3,6 +3,8 @@ defmodule HashtagGraph do
 
   use Application
 
+  @spec start(any, any) :: {:error, any} | {:ok, pid} | {:ok , pid, any}
+
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 

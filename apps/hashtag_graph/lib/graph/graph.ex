@@ -22,30 +22,27 @@ defmodule HashtagGraph.Graph do
   See https://developer.yahoo.com/geo/geoplanet/ for other geolocation identifiers.
   """
   @spec create_graph() :: {:ok, graph}
-                          | {:api_limit, Integer.t}
+                          | {:api_limit, number}
                           | {:reschedule, []}
-                          | no_return
 
   def create_graph() do
-    with {:ok, _limit} <- exceeded_limit?(),
+    with {:ok, _} <- exceeded_limit?(),
       {:ok, hashtags} <- trending_hashtags(@worldwide_woed),
       filtered <- Stream.filter(hashtags, &(Map.get(&1, :query) != nil)),
       queries <- Stream.map(filtered, &(Map.get(&1, :query)))
     do
-      graph = create_graph(queries)
-      {:ok, graph}
+      {:ok, construct_graph(queries)}
     else
-      {:api_limit, 0} -> {:api_limit, []}
+      {:api_limit, 0} -> {:api_limit, 0}
       {:reschedule, []} -> {:reschedule, []}
       _ -> raise("Error\n#{System.stacktrace}")
     end
   end
 
+  # Create every vertex and filter away errors
+  @spec construct_graph([String.t]) :: {:ok, graph}
 
-  # Create every vertex but filter away errors
-  @spec create_graph([String.t]) :: {:ok, graph}
-
-  defp create_graph(hashtags) do
+  defp construct_graph(hashtags) do
     hashtags
     |> Stream.map(&create_vertex/1)
     |> Enum.filter(fn(vertex) -> is_map(vertex) end)
@@ -55,9 +52,8 @@ defmodule HashtagGraph.Graph do
   @doc """
   Determines if the API limit has been exceeded.
   """
-  @spec exceeded_limit?() :: {:ok, Integer.t}
-                             | {:api_limit, Integer.t}
-                             | no_return
+  @spec exceeded_limit?() :: {:ok, number}
+                             | {:api_limit, number}
 
   def exceeded_limit?() do
     remaning_calls = search_api_limit()
@@ -70,7 +66,7 @@ defmodule HashtagGraph.Graph do
 
 
   # Fetch the remaining API calls for the "resources/search/" endpoint
-  @spec search_api_limit() :: Integer.t
+  @spec search_api_limit() :: any
 
   defp search_api_limit() do
     limit = ExTwitter.rate_limit_status(resources: "search")
@@ -81,22 +77,16 @@ defmodule HashtagGraph.Graph do
   @doc """
   Fetches the top 10 trending hashtags based on the Yahoo! Where On Earth ID.
   """
-  @spec trending_hashtags(Integer.t | String.t) :: {:ok, [trending_hashtag]}
+  @spec trending_hashtags(number | String.t | Keyword.t) :: {:ok, [trending_hashtag]}
 
-  def trending_hashtags(woed) when is_integer(woed) do
+  def trending_hashtags(woed) do
     {:ok, ExTwitter.trends(woed, [])}
   end
-
-  def trending_hashtags(woed) when is_binary(woed) do
-    {:ok, ExTwitter.trends(woed, [])}
-  end
-
 
   # Create a vertex with the given hashtag and recent tweets as adjacent vertices.
   @spec create_vertex(String.t) :: vertex
-                                | {:api_limit, Integer.t}
+                                | {:api_limit, number}
                                 | {:reschedule, []}
-                                | no_return
 
   defp create_vertex(hashtag) do
     with {:ok, _remaining} <- exceeded_limit?(),
@@ -116,7 +106,6 @@ defmodule HashtagGraph.Graph do
   # Fetches 5 tweets with the hashtag provided as argument
   @spec tweets(String.t) :: {:ok, [tweet]}
                             | {:reschedule, []}
-                            | no_return
 
   defp tweets(hashtag) do
     response =

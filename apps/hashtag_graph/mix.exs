@@ -2,6 +2,8 @@ defmodule HashtagGraph.Mixfile do
   @moduledoc false
   use Mix.Project
 
+  @spec project() :: list
+
   def project() do
     [app: :hashtag_graph,
      version: "0.1.0",
@@ -18,6 +20,8 @@ defmodule HashtagGraph.Mixfile do
   # Configuration for the OTP application
   #
   # Type "mix help compile.app" for more information
+  @spec application() :: list
+
   def application() do
     [extra_applications: [:logger, :eex, :public_key, :extwitter, :rollbax],
       mod: {HashtagGraph, []}]
@@ -36,6 +40,8 @@ defmodule HashtagGraph.Mixfile do
   #   {:myapp, in_umbrella: true}
   #
   # Type "mix help deps" for more examples and options
+  @spec deps() :: list
+
   defp deps() do
     [{:oauth, github: "tim/erlang-oauth"},
     {:extwitter, "~> 0.8"},
