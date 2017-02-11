@@ -24,8 +24,12 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 - [x] Become comfortable with the actor model
 - [x] Build something with Javascript
 
-
 # Note to myself
+
+- Before any coding:
+  1. Use git-flow 
+  2. Set-up the CI environment first
+  3. Add Pronto with the proper runners for automated code reviews 
 
 - When using 3rd party API's always create two oauth credentials:
 
