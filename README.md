@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
-See the most trending hashtags on Twitter their adjacent tweets.
+See the most trending hashtags on Twitter and their adjacent tweets.
 
 URL: https://trendinghashtaggraph.herokuapp.com
 
