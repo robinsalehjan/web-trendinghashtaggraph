@@ -37,4 +37,4 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 - Always encapsulate untrusted sources of data
   1. Use exceptions to avoid it from spilling into the other parts of the system.
-  2. Proper abstraction and patterns is the idiomatic way of handling uncertantiy.
+  2. Proper abstraction and design patterns is the idiomatic way of handling uncertainty.
