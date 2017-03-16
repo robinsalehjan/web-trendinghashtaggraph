@@ -1,5 +1,5 @@
 # TrendingHashtagGraph
-[![Build Status](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/TrendingHashtagGraph)
+[![Build Status](https://travis-ci.org/robinsjdotcom/trendinghashtaggraph.svg?branch=master)](https://travis-ci.org/robinsjdotcom/trendinghashtaggraph)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/robinsjdotcom/TrendingHashtagGraph.svg)](https://beta.hexfaktor.org/github/robinsjdotcom/TrendingHashtagGraph)
 
 See the most trending hashtags on Twitter and their adjacent tweets.
