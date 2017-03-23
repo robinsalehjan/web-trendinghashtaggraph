@@ -57,9 +57,7 @@ export var App = {
           }
         }
       ],
-
       elements: graph
     })
   }
-
 }
