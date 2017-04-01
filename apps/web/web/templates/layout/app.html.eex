@@ -17,7 +17,7 @@
     <div id="cy"> </div>
     <script>
       let app = require("web/static/js/app").App;
-      setTimeout(() => app.run(), 5000);
+      setTimeout(() => app.run(), 1000);
     </script>
   </body>
 </html>
