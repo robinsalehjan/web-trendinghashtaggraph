@@ -16,8 +16,16 @@
   <body>
     <div id="cy"> </div>
     <script>
-      let app = require("web/static/js/app").App;
-      setTimeout(() => app.run(), 1000);
+      let App = require("web/static/js/app").App;
+
+      App.run();
+
+      window.onload = function () {
+        if (!sessionStorage.getItem("hasReload")) {
+          sessionStorage.setItem("hasReload", "true");
+          window.location.reload();
+        }
+      }
     </script>
   </body>
 </html>
