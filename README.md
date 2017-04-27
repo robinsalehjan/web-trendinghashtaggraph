@@ -17,17 +17,13 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 # Goals for this project
 
-- Learn how to use:
-  - Packer to create production deployable images/containers
-  - Terraform for automating the creation of cloud infrastructure
-  - Creating and deploying Erlang releases with exrm
 - [x] Become comfortable with the actor model
-- [x] Build something with Javascript
+- [x] Build something for the web
 
 # Note to myself
 
 - Before any coding:
-  1. Use git-flow 
+  1. Use git-flow
   2. Set-up the CI environment first
   3. Add Pronto with the proper runners for automated code reviews 
 
