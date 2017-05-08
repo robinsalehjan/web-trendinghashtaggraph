@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Shows a interactive graph of trending twitter hashtags
-    and their adjacent tweets.">
+    <meta name="description" content="Graphs of worlwide trending hashtags
+    and related tweets.">
     <meta name="author" content="Robin Saleh-Jan">
-    <title> Graph of trending hashtags | Created by Robin Saleh-Jan </title>
+    <title> Graphs of worldwide trending hashtags | Created by Robin Saleh-Jan </title>
 
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
@@ -17,15 +17,25 @@
     <div id="cy"> </div>
     <script>
       let App = require("web/static/js/app").App;
-
       App.run();
 
-      window.onload = function () {
-        if (!sessionStorage.getItem("hasReload")) {
-          sessionStorage.setItem("hasReload", "true");
-          window.location.reload();
-        }
+      let dialogAlert = function() {
+        window.alert("\
+        Zoom in - Mouse scroll up \n\
+        Zoom out - Mouse scroll down\n\
+        Move around - Mouse click and hold, and move your mouse around \n\n\
+        Press ENTER to see this menu again");
       }
+
+      document.addEventListener("keypress", function(event) {
+        if (event.keyCode == 13) {
+          dialogAlert();
+        }
+      });
+
+      setTimeout(function () {
+        dialogAlert();
+      }, 5000);
     </script>
   </body>
 </html>
