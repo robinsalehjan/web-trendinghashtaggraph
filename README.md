@@ -10,11 +10,6 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 ![ScreenShot](https://github.com/robinsjdotcom/TrendingHashtagGraph/blob/master/Screenshot.png)
 
-# Blog posts
-[Periodic scheduling using a GenServer](https://medium.com/@robinsjdotcom/periodic-scheduling-using-a-genserver-33242b439bc4#.1d2ahei60) - Scheduling simple tasks without using Redis or some type of task queue, is often asked about from people just starting with Elixir. In this post I detail the proper way to schedule tasks using a GenServer.
-
-[Checklist for deploying umbrella applications to Heroku](https://medium.com/@robinsjdotcom/checklist-for-deploying-umbrella-applications-to-heroku-74a79e07e21f#.qspvspxt4) - While trying to deploy this umbrella application to Heroku, there was no resource for the proper way to do so. I made this post to detail how to deploy umbrella applications to Heroku.
-
 # Goals for this project
 
 - [x] Become comfortable with the actor model
