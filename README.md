@@ -8,7 +8,7 @@ URL: https://trendinghashtaggraph.herokuapp.com
 
 JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
-![ScreenShot](https://github.com/robinsjdotcom/TrendingHashtagGraph/blob/master/Screenshot.png)
+![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/example.gif)
 
 # Goals for this project
 
