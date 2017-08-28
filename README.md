@@ -12,8 +12,8 @@ JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 # Goals for this project
 
-- [x] Become comfortable with the actor model
-- [x] Build something for the web
+- [x] Use the actor model
+- [x] Build something with a javascript frontend
 
 # Note to myself
 
