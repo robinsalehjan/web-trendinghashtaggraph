@@ -5,8 +5,7 @@
 See the most trending hashtags on Twitter and their adjacent tweets.
 
 URL: https://trendinghashtaggraph.herokuapp.com
-
-JSON: https://trendinghashtaggraph.herokuapp.com/api/graph
+JSON representation of the Graph: https://trendinghashtaggraph.herokuapp.com/api/graph
 
 ![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/example.gif)
 
