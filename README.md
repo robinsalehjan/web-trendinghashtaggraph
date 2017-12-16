@@ -13,7 +13,7 @@ JSON representation of the Graph:
 # Run with Docker
 
 1. Make sure to create a `env.list` with the content:
-`
+```
 PORT=8080
 REPLACE_OS_VARS=true
 PHOENIX_SECRET_KEY_BASE=...
@@ -21,7 +21,8 @@ TWITTER_CONSUMER_KEY=...
 TWITTER_CONSUMER_SECRET=...
 TWITTER_ACCESS_TOKEN=...
 TWITTER_ACCESS_TOKEN_SECRET=...
-`
+```
+
 Where `...` is your Phoenix secret and Twitter API credentials, followed by adding them to the terminal by running: `source env.list`
 
 2. Create the image: `docker build --no-cache --build-arg PORT=${PORT} -t thg .`
