@@ -1,5 +1,4 @@
 # TrendingHashtagGraph
-[![Build Status](https://travis-ci.org/robinsalehjan/trendinghashtaggraph.svg?branch=master)](https://travis-ci.org/robinsalehjan/trendinghashtaggraph)
 
 URL:
 
