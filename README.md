@@ -8,7 +8,7 @@ URL:
 
 JSON representation of the Graph:
 
-![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/example.gif)
+![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/imgs/example.gif)
 
 # Run with Docker
 
