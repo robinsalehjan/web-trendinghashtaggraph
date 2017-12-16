@@ -6,7 +6,7 @@ ARG PORT
 
 ARG APP_NAME=trendinghashtaggraph
 ARG PHOENIX_SUBDIR=apps/web
-ENV MIX_ENV=prod TERM=xterm
+ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
 WORKDIR /opt/app
 
 RUN apk add --update alpine-sdk
