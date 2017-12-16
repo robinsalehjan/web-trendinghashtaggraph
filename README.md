@@ -1,8 +1,6 @@
 # TrendingHashtagGraph
 [![Build Status](https://travis-ci.org/robinsalehjan/trendinghashtaggraph.svg?branch=master)](https://travis-ci.org/robinsalehjan/trendinghashtaggraph)
 
-See the most trending hashtags on Twitter and their adjacent tweets.
-
 URL:
 
 JSON representation of the Graph:
