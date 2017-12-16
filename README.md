@@ -20,7 +20,7 @@ TWITTER_ACCESS_TOKEN=...
 TWITTER_ACCESS_TOKEN_SECRET=...
 ```
 
-Where `...` is your Phoenix secret and Twitter API credentials, followed by adding them to the terminal by running: `source env.list`
+Where `...` is your Phoenix secret and Twitter API credentials and then run: `source env.list`
 
 2. Create the image: `docker build --no-cache --build-arg PORT=${PORT} -t thg .`
 
