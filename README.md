@@ -21,7 +21,7 @@ TWITTER_ACCESS_TOKEN_SECRET=...
 
 Where `...` is your Phoenix secret and Twitter API credentials and then run: `source env.list`
 
-2. Create the image: `docker build --no-cache --build-arg PORT=${PORT} -t thg .`
+2. Create the image: `docker build --no-cache -t thg .`
 
 3. Run the image: `docker run -d -p 8080:8080 --env-file env.list --rm thg`
    and open `localhost:8080` in your browser

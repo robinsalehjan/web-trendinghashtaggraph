@@ -1,11 +1,9 @@
 FROM elixir:alpine
 
-# Required to pass during `docker build`
-# e.g: docker build --no-cache --build-arg PORT=8080
-ARG PORT
-
 ARG APP_NAME=trendinghashtaggraph
 ARG PHOENIX_SUBDIR=apps/web
+ARG PORT=8080
+
 ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
 WORKDIR /opt/app
 
