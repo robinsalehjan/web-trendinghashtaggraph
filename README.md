@@ -28,15 +28,11 @@ Where `...` is your Phoenix secret and Twitter API credentials, followed by addi
 2. Create the image: `docker build --no-cache --build-arg PORT=${PORT} -t thg .`
 
 3. Run the image: `docker run -t -d -p 8080:8080 --env-file env.list --rm thg`
-   and open localhost:8080 in your browser
+   and open `localhost:8080` in your browser
 
-# Note to myself
+# Note to self
 
-- Nice to have:
-  1. Setup CI environment first
-  2. Add Pronto with the proper runners for automated code reviews
-
-- Encapsulate external components
-  1. Design patterns and proper abstractions is the idiomatic way of handling complexity.
-  2. Never fully trust 3rd party APIs
-  3. Use exceptions to avoid it from spilling into the other parts of the system.
+1. Setup CI environment first
+2. Add Pronto with the proper runners for automated code reviews
+3. Design patterns and proper abstractions is the idiomatic way of handling complexity.
+4. Use exceptions to avoid it from spilling into the other parts of the system.
