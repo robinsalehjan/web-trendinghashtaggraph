@@ -17,34 +17,17 @@ defmodule HashtagGraph.Mixfile do
      deps: deps()]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   @spec application() :: list
 
   def application() do
-    [extra_applications: [:logger, :eex, :public_key, :extwitter, :rollbax],
-      mod: {HashtagGraph, []}]
+    [mod: {HashtagGraph, []},
+    extra_applications: [:logger, :eex, :public_key, :extwitter, :oauther]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # To depend on another app inside the umbrella:
-  #
-  #   {:myapp, in_umbrella: true}
-  #
-  # Type "mix help deps" for more examples and options
   @spec deps() :: list
 
   defp deps() do
     [{:oauth, github: "tim/erlang-oauth"},
-    {:extwitter, "~> 0.8"},
-    {:rollbax, "~> 0.6"}]
+    {:extwitter, "~> 0.8"}]
   end
 end

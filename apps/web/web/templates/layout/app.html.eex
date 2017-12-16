@@ -21,21 +21,21 @@
 
       let dialogAlert = function() {
         window.alert("\
-        Zoom in - Mouse scroll up \n\
-        Zoom out - Mouse scroll down\n\
-        Move around - Mouse click and hold, and move your mouse around \n\n\
-        Press ENTER to see this menu again");
+        Zoom in - Scroll up \n\
+        Zoom out - Scroll down\n\
+        Move around - Click, hold and move your cursor \n\n\
+        Press SPACE to see this menu again");
       }
 
       document.addEventListener("keypress", function(event) {
-        if (event.keyCode == 13) {
+        if (event.keyCode == 0 || event.keyCode == 32) {
           dialogAlert();
         }
       });
 
       setTimeout(function () {
         dialogAlert();
-      }, 5000);
+      }, 1000);
     </script>
   </body>
 </html>

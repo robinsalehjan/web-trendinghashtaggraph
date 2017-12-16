@@ -1,0 +1,4 @@
+_build
+deps
+test
+apps/web/node_modules
