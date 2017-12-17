@@ -1,4 +1,8 @@
+.dockerignore
+.git
+imgs
 _build
 deps
-test
 apps/web/node_modules
+env.list
+.yaml
