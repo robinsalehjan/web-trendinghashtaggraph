@@ -1,7 +1,7 @@
 class Graph {
   constructor(callback) {
     let request = new XMLHttpRequest();
-    request.open("GET", "http://localhost:8080/api/graph", true);
+    request.open("GET", "http://35.189.118.122/api/graph", true);
 
     request.onreadystatechange = function() {
       if (request.readyState == 4 && request.status == 200) {
