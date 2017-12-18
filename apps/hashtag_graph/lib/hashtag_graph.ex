@@ -20,7 +20,8 @@ defmodule HashtagGraph do
   end
 
   @doc """
-  Fetch the Twitter API credentials, decode them from base64 and 
+  Fetch the Twitter API credentials, decode them from base64 and initalize
+  the ExTwitter client.
   """
   defp configure_twitter_client do
     consumer_key = cond do
