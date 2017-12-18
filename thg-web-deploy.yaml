@@ -25,25 +25,25 @@ spec:
         - name: PHOENIX_SECRET_KEY_BASE
           valueFrom:
             secretKeyRef:
-              name: thg-secret
+              name: thg-web-secret
               key: phoenix_secret
         - name: TWITTER_CONSUMER_KEY
           valueFrom:
             secretKeyRef:
-              name: thg-secret
+              name: thg-web-secret
               key: twitter_consumer_key
         - name: TWITTER_CONSUMER_SECRET
           valueFrom:
             secretKeyRef:
-              name: thg-secret
+              name: thg-web-secret
               key: twitter_consumer_secret
         - name: TWITTER_ACCESS_TOKEN
           valueFrom:
             secretKeyRef:
-              name: thg-secret
+              name: thg-web-secret
               key: twitter_access_token
         - name: TWITTER_ACCESS_TOKEN_SECRET
           valueFrom:
             secretKeyRef:
-              name: thg-secret
+              name: thg-web-secret
               key: twitter_access_token_secret
