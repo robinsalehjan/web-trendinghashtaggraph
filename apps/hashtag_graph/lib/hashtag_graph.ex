@@ -24,25 +24,10 @@ defmodule HashtagGraph do
   the ExTwitter client.
   """
   defp configure_twitter_client do
-    consumer_key = cond do
-      System.get_env("TWITTER_CONSUMER_KEY") == nil -> ""
-      true -> Base.decode64!(System.get_env("TWITTER_CONSUMER_KEY"))
-    end
-
-    consumer_secret = cond do
-      System.get_env("TWITTER_CONSUMER_SECRET") == nil -> ""
-      true -> Base.decode64!(System.get_env("TWITTER_CONSUMER_SECRET"))
-    end
-
-    access_token = cond do
-      System.get_env("TWITTER_ACCESS_TOKEN") == nil -> ""
-      true -> Base.decode64!(System.get_env("TWITTER_ACCESS_TOKEN"))
-    end
-
-    access_token_secret = cond do
-      System.get_env("TWITTER_ACCESS_TOKEN_SECRET") == nil -> ""
-      true -> Base.decode64!(System.get_env("TWITTER_ACCESS_TOKEN_SECRET"))
-    end
+    {:ok, consumer_key} = Base.decode64(System.get_env("TWITTER_CONSUMER_KEY"))
+    {:ok, consumer_secret} = Base.decode64(System.get_env("TWITTER_CONSUMER_SECRET"))
+    {:ok, access_token} = Base.decode64(System.get_env("TWITTER_ACCESS_TOKEN"))
+    {:ok, access_token_secret} = Base.decode64(System.get_env("TWITTER_ACCESS_TOKEN_SECRET"))
 
     ExTwitter.configure(
       consumer_key: consumer_key,
