@@ -2,9 +2,11 @@ FROM elixir:alpine
 
 ARG APP_NAME=trendinghashtaggraph
 ARG PHOENIX_SUBDIR=apps/web
-ARG PORT=8080
 
-ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
+ENV PORT=8080
+ENV REPLACE_OS_VARS=true
+ENV MIX_ENV=prod
+
 WORKDIR /opt/app
 
 RUN apk add --update alpine-sdk
