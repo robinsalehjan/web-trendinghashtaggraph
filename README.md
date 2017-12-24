@@ -1,8 +1,8 @@
 # TrendingHashtagGraph
 
-URL:
+URL: http://185.207.112.146:8080
 
-JSON:
+JSON: http://185.207.112.146:8080/api/graph
 
 ![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/imgs/example.gif)
 
