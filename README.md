@@ -21,7 +21,7 @@ TWITTER_ACCESS_TOKEN_SECRET=...
 
 Where `...` is your Phoenix secret and Twitter API credentials and then run: `source env.list`
 
-2. Pull the image from docker hub: `docker pull robinsalehjan/thg`
+2. Pull the image from docker hub: `docker pull robinsalehjan/thg:v1`
 
 3. Run the image: `docker run -d -p 8080:8080 --env-file env.list --rm robinsalehjan/thg` and open `localhost:8080` in your browser
 
