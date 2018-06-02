@@ -22,9 +22,3 @@ Where you replace the `...` with the value of your Phoenix secret and Twitter AP
 2. Pull the image from docker hub: `docker pull robinsalehjan/thg:v1`
 
 3. Run the image: `docker run -d -p 8080:8080 --env-file env.list --rm robinsalehjan/thg` and open `localhost:8080` in your browser
-
-# Note to self
-
-1. Setup CI environment first
-2. Design patterns and proper abstractions is the idiomatic way of handling complexity.
-3. Use exceptions to avoid it from spilling into the other parts of the system.
