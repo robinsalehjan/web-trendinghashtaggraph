@@ -16,8 +16,8 @@ TWITTER_ACCESS_TOKEN_SECRET=...
 ```
 
 Where you replace the `...` with the value of your Phoenix secret and Twitter API credentials:
-- How to generate a Phoenix secret: https://hexdocs.pm/phoenix/Mix.Tasks.Phoenix.Gen.Secret.html
-- How to get Twitter API credentials: https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html
+- [How to generate a Phoenix secret](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Secret.html)
+- [How to get Twitter API credentials](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 
 2. Pull the image from docker hub: `docker pull robinsalehjan/thg:v1`
 
