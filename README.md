@@ -22,3 +22,6 @@ Where you replace the `...` with the value of your Phoenix secret and Twitter AP
 2. Pull the image from docker hub: `docker pull robinsalehjan/thg:v1`
 
 3. Run the image: `docker run -d -p 8080:8080 --env-file env.list --rm robinsalehjan/thg` and open `localhost:8080` in your browser
+
+# Architecture
+![Alt Text](https://github.com/robinsjdotcom/trendinghashtaggraph/blob/master/imgs/architecture.png)
